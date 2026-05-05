@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 
-{% block title %}{{ portfolio.name }} - Architect Portfolio{% endblock %}
+{% block title %}{{ portfolio.name }} - Daniel Moura{% endblock %}
 
 {% block content %}
 <section class="project-header">
     <h1>{{ portfolio.name }}</h1>
     <div class="project-meta">
-        {% if portfolio.year %}<span>{{ portfolio.year }}</span>{% endif %}
-        {% if portfolio.location %}<span>{{ portfolio.location }}</span>{% endif %}
+        {% if portfolio.year %}<span>Year: {{ portfolio.year }}</span>{% endif %}
+        {% if portfolio.location %}<span>Location: {{ portfolio.location }}</span>{% endif %}
     </div>
 </section>
 

@@ -48,8 +48,13 @@ async def portfolio_detail(request: Request, portfolio_id: int, db: Session = De
     return templates.TemplateResponse(request=request, name="portfolio_detail.html", context={"request": request, "portfolio": portfolio})
 
 @app.get("/about", response_class=HTMLResponse)
-async def about(request: Request):
-    return templates.TemplateResponse(request=request, name="about.html")
+async def about(request: Request, db: Session = Depends(get_db)):
+    featured = crud_portfolio.get_featured_portfolios(db)
+    return templates.TemplateResponse(
+        request=request,
+        name="about.html",
+        context={"request": request, "featured_portfolios": featured},
+    )
 
 @app.get("/contact", response_class=HTMLResponse)
 async def contact(request: Request):

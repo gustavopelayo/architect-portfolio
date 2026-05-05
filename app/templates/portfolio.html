@@ -1,25 +1,30 @@
 {% extends "base.html" %}
 
-{% block title %}Projects - Architect Portfolio{% endblock %}
+{% block title %}Portfolio - Daniel Moura{% endblock %}
 
 {% block content %}
 <section class="page-header">
-    <h1>Projects</h1>
+    <h1>Portfolio</h1>
 </section>
 
 <div class="projects-grid">
     {% for portfolio in portfolios %}
-    <div class="project-card">
+    <article class="project-card">
         <a href="/portfolio/{{ portfolio.id }}">
             {% if portfolio.images %}
             <img src="{{ portfolio.images[0].image_url }}" alt="{{ portfolio.name }}">
+            {% else %}
+            <div style="background:#ece7e0; aspect-ratio:4/5;"></div>
             {% endif %}
             <div class="project-info">
                 <h3>{{ portfolio.name }}</h3>
-                {% if portfolio.year %}<span class="project-year">{{ portfolio.year }}</span>{% endif %}
+                <span class="project-year">
+                    {% if portfolio.location %}{{ portfolio.location }}{% else %}Location{% endif %}
+                    {% if portfolio.year %} / {{ portfolio.year }}{% endif %}
+                </span>
             </div>
         </a>
-    </div>
+    </article>
     {% else %}
     <p>No projects found.</p>
     {% endfor %}
