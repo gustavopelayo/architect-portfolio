@@ -58,7 +58,20 @@ async def about(request: Request, db: Session = Depends(get_db)):
 
 @app.get("/contact", response_class=HTMLResponse)
 async def contact(request: Request):
-    return templates.TemplateResponse(request=request, name="contact.html")
+    return templates.TemplateResponse(request=request, name="contact.html", context={"request": request})
+
+@app.post("/contact", response_class=HTMLResponse)
+async def contact_form(
+    request: Request,
+    name: str = Form(...),
+    email: str = Form(...),
+    message: str = Form(...),
+    db: Session = Depends(get_db)
+):
+    # Log the form data (in a real application, you would send an email here)
+    print(f"Contact form submission from {name} ({email}): {message}")
+    # Redirect to the contact page with a success message
+    return RedirectResponse(url="/contact?success=1", status_code=302)
 
 # Admin routes
 @app.get("/admin/login", response_class=HTMLResponse)

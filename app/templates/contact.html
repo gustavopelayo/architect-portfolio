@@ -24,12 +24,18 @@
             </div>
             <button type="submit">Send Message</button>
         </form>
+        
+        {% if request.query_params.get('success') == '1' %}
+        <div class="success-message">
+            <p>Thank you for your message! I'll get back to you soon.</p>
+        </div>
+        {% endif %}
     </div>
     <div class="contact-info">
         <p>We would love to hear from you. Whether you have a project in mind or simply want to learn more about our studio, feel free to reach out.</p>
         
-        <p>Email: info@architectstudio.com<br>
-        Phone: +351 123 456 789<br>
+        <p>Email: dadamoura@cloud.com<br>
+        Phone: +351 931 110 004<br>
         Address: Rua Augusta, 123<br>
         Lisbon, Portugal</p>
     </div>

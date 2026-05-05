@@ -466,7 +466,18 @@ footer {
         grid-template-columns: 1fr;
     }
 
-    .about-image img {
-        min-height: 280px;
-    }
+.about-image img {
+    min-height: 280px;
+}
+
+/* Contact form success message */
+.success-message {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    padding: 1.5rem;
+    margin-top: 1rem;
+    color: var(--text);
+    font-size: 0.9rem;
+    border-left: 3px solid var(--accent);
+}
 }
