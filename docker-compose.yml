@@ -1,0 +1,21 @@
+services:
+  app:
+    build: .
+    container_name: architect-portfolio
+    restart: unless-stopped
+    ports:
+      - "8088:8000"   # your Python app port
+    volumes:
+      - ./app/static/uploads:/app/app/static/uploads
+      - ./test.db:/app/test.db
+    environment:
+      - DATABASE_URL=sqlite:///./test.db
+
+  tunnel:
+    image: cloudflare/cloudflared:latest
+    restart: unless-stopped
+    command: tunnel run
+    environment:
+      - TUNNEL_TOKEN=${TUNNEL_TOKEN}
+    depends_on:
+      - app

@@ -1,0 +1,72 @@
+# Python
+__pycache__
+*.py[cod]
+*$py.class
+*.so
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+
+# Translations
+*.mo
+*.pot
+
+# Django stuff:
+*.log
+local_settings.py
+db.sqlite3
+media
+
+# Flask stuff:
+instance/
+.webassets-cache
+
+# Scrapy stuff:
+.scrapy
+
+# Dokku
+.git
+.Dockerfile
+.dockerignore
+
+# Other
+node_modules/
+bower_components/
+*.sass-cache*
+*.log
+logs
+
+# Local development files
+.cookiecutter
+docs/
+tests/
+*.md
+!README.md
+README.md
+create_admin.py
+init_db*.py
+server.log
+test.db
+cookies.txt
