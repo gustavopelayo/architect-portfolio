@@ -33,6 +33,10 @@ Thumbs.db
 .env
 instance/
 .webassets-cache
+# User uploads
+app/static/uploads/
+# Misc
+cookies.txt
 
 # Logs
 *.log
