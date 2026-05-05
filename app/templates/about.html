@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}About - Architect Studio{% endblock %}
+
+{% block content %}
+<section class="about-header">
+    <h1>About<br>the Studio</h1>
+</section>
+
+<section class="about-content">
+    <div class="about-text">
+        <p>Design is not only what we see, but what quietly transforms how we dwell.</p>
+        
+        <p>We are an architecture practice with projects spanning residential, commercial, and cultural spaces. We create holistic concepts that translate context, functionality, and personality into structures that feel both effortless and refined.</p>
+        
+        <p>Our approach is rooted in detail: from the grand scale of spatial planning to the subtle nuances of materiality and light, each element is crafted to evoke a tactile and emotional response. Above all, our work seeks to create harmony - spaces that inspire, comfort, and endure.</p>
+    </div>
+    <div class="about-image">
+        {% if featured_portfolios and featured_portfolios[0].images %}
+        <img src="{{ featured_portfolios[0].images[0].image_url }}" alt="Studio">
+        {% else %}
+        <div style="background: #f5f5f5; height: 400px;"></div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

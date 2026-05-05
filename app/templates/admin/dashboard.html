@@ -1,0 +1,40 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}Dashboard - Admin{% endblock %}
+
+{% block content %}
+<section class="dashboard-header">
+    <h1>Dashboard</h1>
+    <a href="/admin/projects/create" class="btn-create">New Project</a>
+</section>
+
+{% if projects %}
+<table class="projects-table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Year</th>
+            <th>Location</th>
+            <th>Featured</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for project in projects %}
+        <tr>
+            <td><a href="/portfolio/{{ project.id }}">{{ project.name }}</a></td>
+            <td>{{ project.year or '-' }}</td>
+            <td>{{ project.location or '-' }}</td>
+            <td>{% if project.is_featured %}Yes{% else %}No{% endif %}</td>
+            <td>
+                <a href="/admin/projects/{{ project.id }}/edit" class="btn-edit">Edit</a>
+                <a href="/admin/projects/{{ project.id }}/delete" class="btn-delete" onclick="return confirm('Are you sure?')">Delete</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>No projects yet. <a href="/admin/projects/create">Create your first project</a>.</p>
+{% endif %}
+{% endblock %}

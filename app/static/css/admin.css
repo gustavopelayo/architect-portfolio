@@ -1,0 +1,282 @@
+/* Admin Panel Styles - Minimalist */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Source Sans Pro', sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #000;
+    background: #f5f5f5;
+}
+
+/* Admin Header */
+.admin-header {
+    background: #000;
+    padding: 1rem 0;
+}
+
+.admin-nav {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.admin-logo {
+    color: #fff;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    letter-spacing: 0.05em;
+}
+
+.admin-nav nav a {
+    color: #fff;
+    margin-left: 2rem;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+/* Main Content */
+.admin-main {
+    max-width: 1400px;
+    margin: 2rem auto;
+    padding: 0 2rem;
+}
+
+/* Login */
+.login-container {
+    max-width: 400px;
+    margin: 4rem auto;
+    background: #fff;
+    padding: 3rem;
+    border: 1px solid #000;
+}
+
+.login-form h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    margin-bottom: 2rem;
+}
+
+.error-message {
+    background: #ff0000;
+    color: #fff;
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+}
+
+/* Forms */
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+    width: 100%;
+    padding: 0.75rem 0;
+    border: none;
+    border-bottom: 1px solid #000;
+    font-family: inherit;
+    font-size: 1rem;
+    background: transparent;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+    outline: none;
+    border-bottom-width: 2px;
+}
+
+.form-group textarea {
+    min-height: 150px;
+    resize: vertical;
+}
+
+button[type="submit"] {
+    background: #000;
+    color: #fff;
+    border: none;
+    padding: 0.75rem 2rem;
+    font-family: inherit;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+}
+
+/* Dashboard */
+.dashboard-header {
+    margin-bottom: 2rem;
+}
+
+.dashboard-header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+}
+
+.btn-create {
+    display: inline-block;
+    background: #000;
+    color: #fff;
+    padding: 0.75rem 2rem;
+    margin-top: 1rem;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+/* Projects Table */
+.projects-table {
+    width: 100%;
+    background: #fff;
+    border: 1px solid #000;
+}
+
+.projects-table th,
+.projects-table td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+.projects-table th {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    background: #f9f9f9;
+}
+
+.projects-table td {
+    font-size: 0.95rem;
+}
+
+.projects-table a {
+    color: #000;
+    text-decoration: underline;
+}
+
+.btn-edit,
+.btn-delete {
+    padding: 0.4rem 1rem;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+}
+
+.btn-edit {
+    background: #fff;
+    border: 1px solid #000;
+    color: #000;
+}
+
+.btn-delete {
+    background: #000;
+    border: none;
+    color: #fff;
+}
+
+/* Project Form */
+.project-form {
+    background: #fff;
+    padding: 2rem;
+    border: 1px solid #000;
+}
+
+.project-form h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    margin-bottom: 2rem;
+}
+
+.checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.checkbox-group input[type="checkbox"] {
+    width: auto;
+}
+
+/* Image Upload */
+.image-upload-section {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid #000;
+}
+
+.image-upload-section h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.current-images {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+    margin: 1rem 0 2rem;
+}
+
+.image-item {
+    position: relative;
+    border: 1px solid #000;
+}
+
+.image-item img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    display: block;
+}
+
+.image-item .caption {
+    padding: 0.5rem;
+    font-size: 0.8rem;
+    background: #f9f9f9;
+}
+
+.image-item .btn-delete {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: #ff0000;
+    color: #fff;
+    border: none;
+    width: 25px;
+    height: 25px;
+    font-size: 1rem;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.upload-form {
+    margin-top: 1rem;
+}
+
+.upload-form input[type="file"] {
+    margin: 1rem 0;
+}

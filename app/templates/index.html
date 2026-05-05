@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}Architect Studio{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <img src="/static/uploads/hero-minimalist.jpg" alt="Architecture Studio" class="hero-image">
+    <div class="hero-content">
+        <h1>Design is not only<br>what we see,<br>but what quietly<br>transforms how we dwell.</h1>
+    </div>
+</section>
+
+<section class="projects-list">
+    {% for portfolio in featured_portfolios %}
+    <div class="project-item">
+        <a href="/portfolio/{{ portfolio.id }}">
+            {% if portfolio.images %}
+            <img src="{{ portfolio.images[0].image_url }}" alt="{{ portfolio.name }}" class="project-thumbnail">
+            {% else %}
+            <div class="project-thumbnail" style="background: #f5f5f5;"></div>
+            {% endif %}
+        </a>
+        <a href="/portfolio/{{ portfolio.id }}">{{ portfolio.name }}</a>
+        {% if portfolio.year %}<span class="project-year">{{ portfolio.year }}</span>{% endif %}
+    </div>
+    {% else %}
+    <div class="project-item">
+        <div class="project-thumbnail" style="background: #f5f5f5;"></div>
+        <a href="#">La Residenza</a>
+        <span class="project-year">2024</span>
+    </div>
+    <div class="project-item">
+        <div class="project-thumbnail" style="background: #f5f5f5;"></div>
+        <a href="#">Burj View</a>
+        <span class="project-year">2023</span>
+    </div>
+    <div class="project-item">
+        <div class="project-thumbnail" style="background: #f5f5f5;"></div>
+        <a href="#">Madame Rouge</a>
+        <span class="project-year">2023</span>
+    </div>
+    {% endfor %}
+</section>
+{% endblock %}

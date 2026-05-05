@@ -1,0 +1,85 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}{% if project %}Edit{% else %}Create{% endif %} Project - Admin{% endblock %}
+
+{% block content %}
+<section class="project-form">
+    <h1>{% if project %}Edit{% else %}Create{% endif %} Project</h1>
+    
+    <form action="{% if project %}/admin/projects/{{ project.id }}/edit{% else %}/admin/projects/create{% endif %}" method="POST">
+        <div class="form-group">
+            <label for="name">Project Name</label>
+            <input type="text" id="name" name="name" value="{% if project %}{{ project.name }}{% endif %}" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="description">Description</label>
+            <textarea id="description" name="description" rows="10">{% if project %}{{ project.description }}{% endif %}</textarea>
+        </div>
+        
+        <div class="form-group">
+            <label for="year">Year</label>
+            <input type="number" id="year" name="year" value="{% if project %}{{ project.year }}{% endif %}">
+        </div>
+        
+        <div class="form-group">
+            <label for="location">Location</label>
+            <input type="text" id="location" name="location" value="{% if project %}{{ project.location }}{% endif %}">
+        </div>
+        
+        <div class="form-group checkbox-group">
+            <input type="checkbox" id="is_featured" name="is_featured" {% if project and project.is_featured %}checked{% endif %}>
+            <label for="is_featured">Featured Project</label>
+        </div>
+        
+        <button type="submit">{% if project %}Update{% else %}Create{% endif %} Project</button>
+    </form>
+    
+    {% if project %}
+    <section class="image-upload-section">
+        <h2>Project Images</h2>
+        
+        {% if project.images or project.technical_images %}
+        <div class="current-images">
+            {% for image in project.images %}
+            <div class="image-item">
+                <img src="{{ image.image_url }}" alt="{{ project.name }}">
+                <div class="caption">{{ image.caption or 'No caption' }}</div>
+                <a href="/admin/images/{{ image.id }}/delete" class="btn-delete" onclick="return confirm('Delete this image?')">×</a>
+            </div>
+            {% endfor %}
+        </div>
+        
+        {% if project.technical_images %}
+        <h3 style="margin-top: 2rem;">Technical Images</h3>
+        <div class="current-images">
+            {% for image in project.technical_images %}
+            <div class="image-item">
+                <img src="{{ image.image_url }}" alt="{{ project.name }} - Technical">
+                <div class="caption">{{ image.caption or 'No caption' }}</div>
+                <a href="/admin/images/{{ image.id }}/delete" class="btn-delete" onclick="return confirm('Delete this image?')">×</a>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endif %}
+        
+        <form action="/admin/projects/{{ project.id }}/upload" method="POST" enctype="multipart/form-data" class="upload-form">
+            <div class="form-group">
+                <label for="file">Upload Image</label>
+                <input type="file" id="file" name="file" required>
+            </div>
+            <div class="form-group">
+                <label for="caption">Caption (optional)</label>
+                <input type="text" id="caption" name="caption">
+            </div>
+            <div class="form-group checkbox-group">
+                <input type="checkbox" id="is_technical" name="is_technical">
+                <label for="is_technical">Technical Drawing</label>
+            </div>
+            <button type="submit">Upload Image</button>
+        </form>
+    </section>
+    {% endif %}
+</section>
+{% endblock %}

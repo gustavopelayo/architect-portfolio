@@ -1,0 +1,536 @@
+/* Acquabella-Inspired Minimalist Design */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Source Sans Pro', sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    color: #000;
+    background: #fff;
+    overflow-x: hidden;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Playfair Display', serif;
+    font-weight: 400;
+    margin-bottom: 1rem;
+}
+
+a {
+    color: #000;
+    text-decoration: none;
+}
+
+/* Header - Clean & Minimal */
+header {
+    padding: 1.2rem 0;
+    border-bottom: 1px solid #000;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: #fff;
+    z-index: 1000;
+}
+
+.navbar {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    letter-spacing: 0.1em;
+    font-weight: 400;
+}
+
+.nav-links {
+    display: flex;
+    list-style: none;
+    gap: 2rem;
+}
+
+.nav-links a {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    transition: opacity 0.3s ease;
+}
+
+.nav-links a:hover {
+    opacity: 0.5;
+}
+
+/* Container */
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+/* Hero - Large & Immersive */
+.hero {
+    margin-top: 4rem;
+    height: 85vh;
+    position: relative;
+    overflow: hidden;
+    background: #f5f5f5;
+}
+
+.hero-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: grayscale(100%);
+    transition: filter 0.8s ease;
+}
+
+.hero:hover .hero-image {
+    filter: grayscale(0%);
+}
+
+.hero-content {
+    position: absolute;
+    bottom: 4rem;
+    left: 2rem;
+    z-index: 10;
+}
+
+.hero-content h1 {
+    font-size: 3.5rem;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    color: #fff;
+    text-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    font-weight: 400;
+}
+
+/* Projects List - Elegant & Spacious */
+.projects-list {
+    margin: 5rem 0 8rem;
+    max-width: 1400px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0 2rem;
+}
+
+.project-item {
+    padding: 1.5rem 0;
+    border-bottom: 1px solid #000;
+    display: grid;
+    grid-template-columns: 120px 1fr auto;
+    gap: 2rem;
+    align-items: center;
+    transition: opacity 0.4s ease;
+}
+
+.project-item:hover {
+    opacity: 0.6;
+}
+
+.project-thumbnail {
+    width: 120px;
+    height: 80px;
+    object-fit: cover;
+    filter: grayscale(100%);
+    transition: filter 0.4s ease;
+}
+
+.project-item:hover .project-thumbnail {
+    filter: grayscale(0%);
+}
+
+.project-item a {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    font-weight: 400;
+}
+
+.project-year {
+    font-size: 0.85rem;
+    color: #666;
+}
+
+/* Projects Grid - Acquabella Style */
+.projects-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2.5rem;
+    margin: 4rem 0;
+    max-width: 1400px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0 2rem;
+}
+
+.project-card {
+    border: none;
+    opacity: 0;
+    animation: fadeIn 0.8s ease forwards;
+}
+
+.project-card:nth-child(2) { animation-delay: 0.15s; }
+.project-card:nth-child(3) { animation-delay: 0.3s; }
+.project-card:nth-child(4) { animation-delay: 0.45s; }
+.project-card:nth-child(5) { animation-delay: 0.6s; }
+.project-card:nth-child(6) { animation-delay: 0.75s; }
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.project-card a {
+    display: block;
+    text-decoration: none;
+}
+
+.project-card img {
+    width: 100%;
+    aspect-ratio: 3/4;
+    object-fit: cover;
+    display: block;
+    filter: grayscale(100%);
+    transition: filter 0.6s ease, transform 0.6s ease;
+}
+
+.project-card:hover img {
+    filter: grayscale(0%);
+    transform: scale(1.03);
+}
+
+.project-info {
+    padding: 1.2rem 0;
+}
+
+.project-info h3 {
+    font-size: 1.15rem;
+    margin-bottom: 0.3rem;
+    font-weight: 400;
+    color: #000;
+}
+
+.project-location,
+.project-year {
+    font-size: 0.85rem;
+    color: #666;
+}
+
+/* Page Header - Elegant */
+.page-header {
+    padding: 6rem 0 3rem;
+    opacity: 0;
+    animation: fadeIn 0.8s ease 0.2s forwards;
+}
+
+.page-header h1 {
+    font-size: 2.8rem;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+}
+
+/* Project Detail - Spacious */
+.project-header {
+    padding: 6rem 0 3rem;
+    opacity: 0;
+    animation: fadeIn 0.8s ease 0.2s forwards;
+}
+
+.project-header h1 {
+    font-size: 2.8rem;
+    max-width: 900px;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+}
+
+.project-meta {
+    margin-top: 2rem;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.project-meta span {
+    margin-right: 2rem;
+}
+
+/* Project Gallery */
+.project-gallery {
+    padding: 4rem 0;
+}
+
+.image-grid-main,
+.image-grid-technical {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+    margin: 3rem 0;
+}
+
+.image-item {
+    opacity: 0;
+    animation: fadeIn 0.8s ease forwards;
+}
+
+.image-item:nth-child(2) { animation-delay: 0.15s; }
+.image-item:nth-child(3) { animation-delay: 0.3s; }
+.image-item:nth-child(4) { animation-delay: 0.45s; }
+
+.image-item img {
+    width: 100%;
+    height: auto;
+    display: block;
+    filter: grayscale(100%);
+    transition: filter 0.6s ease;
+}
+
+.image-item:hover img {
+    filter: grayscale(0%);
+}
+
+.image-caption {
+    padding: 0.5rem 0;
+    font-size: 0.85rem;
+    color: #666;
+}
+
+.technical-section {
+    margin: 5rem 0;
+}
+
+.technical-section h2 {
+    font-size: 1.8rem;
+    margin-bottom: 2.5rem;
+    font-weight: 400;
+}
+
+/* Project Description */
+.project-description {
+    padding: 4rem 0;
+    max-width: 800px;
+    margin: 0 auto;
+    opacity: 0;
+    animation: fadeIn 0.8s ease 0.4s forwards;
+}
+
+.project-description h2 {
+    font-size: 1.8rem;
+    margin-bottom: 2rem;
+    font-weight: 400;
+}
+
+/* About - Refined */
+.about-header {
+    padding: 6rem 0 3rem;
+    opacity: 0;
+    animation: fadeIn 0.8s ease 0.2s forwards;
+}
+
+.about-header h1 {
+    font-size: 2.8rem;
+    font-weight: 400;
+}
+
+.about-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    margin: 4rem 0;
+    padding: 4rem 0;
+    border-top: 1px solid #000;
+    border-bottom: 1px solid #000;
+    opacity: 0;
+    animation: fadeIn 0.8s ease 0.3s forwards;
+}
+
+.about-text p {
+    margin-bottom: 1.5rem;
+    line-height: 1.8;
+    font-size: 1rem;
+}
+
+.about-image img {
+    width: 100%;
+    height: auto;
+    display: block;
+    filter: grayscale(100%);
+    transition: filter 0.6s ease;
+}
+
+.about-image:hover img {
+    filter: grayscale(0%);
+}
+
+/* Contact - Clean */
+.contact-header {
+    padding: 6rem 0 3rem;
+    opacity: 0;
+    animation: fadeIn 0.8s ease 0.2s forwards;
+}
+
+.contact-header h1 {
+    font-size: 2.8rem;
+    font-weight: 400;
+}
+
+.contact-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    margin: 4rem 0;
+    padding: 4rem 0;
+    border-top: 1px solid #000;
+    opacity: 0;
+    animation: fadeIn 0.8s ease 0.3s forwards;
+}
+
+.contact-form {
+    padding: 0;
+}
+
+.form-group {
+    margin-bottom: 2rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 0.8rem 0;
+    border: none;
+    border-bottom: 1px solid #000;
+    font-family: inherit;
+    font-size: 1rem;
+    background: transparent;
+    transition: border-color 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-bottom-width: 2px;
+}
+
+button[type="submit"] {
+    background: #000;
+    color: #fff;
+    border: none;
+    padding: 1rem 3rem;
+    font-family: inherit;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    cursor: pointer;
+    transition: opacity 0.3s ease;
+}
+
+button[type="submit"]:hover {
+    opacity: 0.7;
+}
+
+.contact-info p {
+    margin-bottom: 1.5rem;
+    line-height: 1.8;
+    font-size: 1rem;
+}
+
+/* Footer - Minimal */
+footer {
+    padding: 3rem 0;
+    border-top: 1px solid #000;
+    font-size: 0.85rem;
+    color: #666;
+    text-align: center;
+}
+
+/* Responsive - Elegant */
+@media (max-width: 1024px) {
+    .projects-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .hero-content h1 {
+        font-size: 3rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .navbar {
+        padding: 0 1rem;
+    }
+    
+    .container {
+        padding: 0 1rem;
+    }
+    
+    .projects-grid {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+    
+    .hero {
+        height: 60vh;
+    }
+    
+    .hero-content h1 {
+        font-size: 2.5rem;
+    }
+    
+    .project-item {
+        grid-template-columns: 100px 1fr auto;
+        gap: 1.5rem;
+    }
+    
+    .project-thumbnail {
+        width: 100px;
+        height: 70px;
+    }
+    
+    .about-content,
+    .contact-content {
+        grid-template-columns: 1fr;
+        gap: 3rem;
+    }
+    
+    .image-grid-main,
+    .image-grid-technical {
+        grid-template-columns: 1fr;
+    }
+    
+    .nav-links {
+        gap: 1rem;
+    }
+    
+    .nav-links a {
+        font-size: 0.7rem;
+    }
+    
+    .page-header h1,
+    .project-header h1,
+    .about-header h1,
+    .contact-header h1 {
+        font-size: 2.2rem;
+    }
+}

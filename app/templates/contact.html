@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}Contact - Architect Studio{% endblock %}
+
+{% block content %}
+<section class="contact-header">
+    <h1>Get in<br>Touch</h1>
+</section>
+
+<section class="contact-content">
+    <div class="contact-form">
+        <form action="/contact" method="POST">
+            <div class="form-group">
+                <label for="name">Name</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="message">Message</label>
+                <textarea id="message" name="message" rows="6" required></textarea>
+            </div>
+            <button type="submit">Send Message</button>
+        </form>
+    </div>
+    <div class="contact-info">
+        <p>We would love to hear from you. Whether you have a project in mind or simply want to learn more about our studio, feel free to reach out.</p>
+        
+        <p>Email: info@architectstudio.com<br>
+        Phone: +351 123 456 789<br>
+        Address: Rua Augusta, 123<br>
+        Lisbon, Portugal</p>
+    </div>
+</section>
+{% endblock %}

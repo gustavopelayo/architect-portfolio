@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}{{ portfolio.name }} - Architect Portfolio{% endblock %}
+
+{% block content %}
+<section class="project-header">
+    <h1>{{ portfolio.name }}</h1>
+    <div class="project-meta">
+        {% if portfolio.year %}<span>{{ portfolio.year }}</span>{% endif %}
+        {% if portfolio.location %}<span>{{ portfolio.location }}</span>{% endif %}
+    </div>
+</section>
+
+{% if portfolio.images %}
+<section class="project-gallery">
+    <div class="image-grid-main">
+        {% for image in portfolio.images %}
+        <div class="image-item">
+            <img src="{{ image.image_url }}" alt="{{ portfolio.name }}">
+            {% if image.caption %}
+            <div class="image-caption">{{ image.caption }}</div>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+{% if portfolio.technical_images %}
+<section class="technical-section">
+    <h2>Technical Drawings</h2>
+    <div class="image-grid-technical">
+        {% for image in portfolio.technical_images %}
+        <div class="image-item">
+            <img src="{{ image.image_url }}" alt="{{ portfolio.name }} - Technical">
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+{% if portfolio.description %}
+<section class="project-description">
+    <div class="description-content">
+        {{ portfolio.description | safe }}
+    </div>
+</section>
+{% endif %}
+{% endblock %}
