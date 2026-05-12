@@ -10,3 +10,5 @@ pydantic>=1.8.0
 jinja2>=3.0.0
 aiofiles>=0.8.0
 pillow>=8.0.0
+pydantic-settings>=2.0.0
+email-validator>=2.0.0
