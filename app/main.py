@@ -13,6 +13,7 @@ from app.api.v1.endpoints import portfolio, auth
 from app.db.session import get_db
 from app.core.security import authenticate_user, create_access_token
 from app.crud import portfolio as crud_portfolio
+from app.core.settings_helper import get_site_settings
 
 app = FastAPI(title="Architect Portfolio")
 
@@ -30,35 +31,40 @@ app.include_router(auth.router, prefix="/api/v1/auth", tags=["auth"])
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request, db: Session = Depends(get_db)):
     from app.crud import portfolio as crud_portfolio
+    site_settings = get_site_settings()
     featured = crud_portfolio.get_featured_portfolios(db)
-    return templates.TemplateResponse(request=request, name="index.html", context={"request": request, "featured_portfolios": featured})
+    return templates.TemplateResponse(request=request, name="index.html", context={"request": request, "featured_portfolios": featured, "settings": site_settings})
 
 @app.get("/portfolio", response_class=HTMLResponse)
 async def portfolio_page(request: Request, db: Session = Depends(get_db)):
     from app.crud import portfolio as crud_portfolio
+    site_settings = get_site_settings()
     portfolios = crud_portfolio.get_portfolios(db, skip=0, limit=100)
-    return templates.TemplateResponse(request=request, name="portfolio.html", context={"request": request, "portfolios": portfolios})
+    return templates.TemplateResponse(request=request, name="portfolio.html", context={"request": request, "portfolios": portfolios, "settings": site_settings})
 
 @app.get("/portfolio/{portfolio_id}", response_class=HTMLResponse)
 async def portfolio_detail(request: Request, portfolio_id: int, db: Session = Depends(get_db)):
     from app.crud import portfolio as crud_portfolio
+    site_settings = get_site_settings()
     portfolio = crud_portfolio.get_portfolio(db, portfolio_id=portfolio_id)
     if not portfolio:
         return RedirectResponse(url="/portfolio", status_code=302)
-    return templates.TemplateResponse(request=request, name="portfolio_detail.html", context={"request": request, "portfolio": portfolio})
+    return templates.TemplateResponse(request=request, name="portfolio_detail.html", context={"request": request, "portfolio": portfolio, "settings": site_settings})
 
 @app.get("/about", response_class=HTMLResponse)
 async def about(request: Request, db: Session = Depends(get_db)):
+    site_settings = get_site_settings()
     featured = crud_portfolio.get_featured_portfolios(db)
     return templates.TemplateResponse(
         request=request,
         name="about.html",
-        context={"request": request, "featured_portfolios": featured},
+        context={"request": request, "featured_portfolios": featured, "settings": site_settings},
     )
 
 @app.get("/contact", response_class=HTMLResponse)
 async def contact(request: Request):
-    return templates.TemplateResponse(request=request, name="contact.html", context={"request": request})
+    site_settings = get_site_settings()
+    return templates.TemplateResponse(request=request, name="contact.html", context={"request": request, "settings": site_settings})
 
 @app.post("/contact", response_class=HTMLResponse)
 async def contact_form(
@@ -76,7 +82,8 @@ async def contact_form(
 # Admin routes
 @app.get("/admin/login", response_class=HTMLResponse)
 async def admin_login(request: Request, error: str = None):
-    return templates.TemplateResponse(request=request, name="admin/login.html", context={"request": request, "error": error})
+    site_settings = get_site_settings()
+    return templates.TemplateResponse(request=request, name="admin/login.html", context={"request": request, "error": error, "settings": site_settings})
 
 @app.post("/admin/login")
 async def admin_login_post(
@@ -87,10 +94,11 @@ async def admin_login_post(
 ):
     user = authenticate_user(db, username, password)
     if not user:
+        site_settings = get_site_settings()
         return templates.TemplateResponse(
             request=request, 
             name="admin/login.html", 
-            context={"request": request, "error": "Invalid credentials"}
+            context={"request": request, "error": "Invalid credentials", "settings": site_settings}
         )
     access_token = create_access_token(data={"sub": user.username})
     response = RedirectResponse(url="/admin/dashboard", status_code=302)
@@ -105,16 +113,18 @@ async def admin_logout():
 
 @app.get("/admin/dashboard", response_class=HTMLResponse)
 async def admin_dashboard(request: Request, db: Session = Depends(get_db)):
+    site_settings = get_site_settings()
     portfolios = crud_portfolio.get_portfolios(db, skip=0, limit=100)
     return templates.TemplateResponse(
         request=request, 
         name="admin/dashboard.html", 
-        context={"request": request, "projects": portfolios}
+        context={"request": request, "projects": portfolios, "settings": site_settings}
     )
 
 @app.get("/admin/projects/create", response_class=HTMLResponse)
 async def create_project_form(request: Request):
-    return templates.TemplateResponse(request=request, name="admin/project_form.html", context={"request": request})
+    site_settings = get_site_settings()
+    return templates.TemplateResponse(request=request, name="admin/project_form.html", context={"request": request, "settings": site_settings})
 
 @app.post("/admin/projects/create")
 async def create_project(
@@ -137,13 +147,14 @@ async def create_project(
 
 @app.get("/admin/projects/{portfolio_id}/edit", response_class=HTMLResponse)
 async def edit_project_form(request: Request, portfolio_id: int, db: Session = Depends(get_db)):
+    site_settings = get_site_settings()
     portfolio = crud_portfolio.get_portfolio(db, portfolio_id=portfolio_id)
     if not portfolio:
         return RedirectResponse(url="/admin/dashboard", status_code=302)
     return templates.TemplateResponse(
         request=request, 
         name="admin/project_form.html", 
-        context={"request": request, "project": portfolio}
+        context={"request": request, "project": portfolio, "settings": site_settings}
     )
 
 @app.post("/admin/projects/{portfolio_id}/edit")
@@ -178,6 +189,123 @@ async def toggle_featured(portfolio_id: int, db: Session = Depends(get_db)):
         from app.schemas.portfolio import PortfolioUpdate
         crud_portfolio.update_portfolio(db, portfolio_id, PortfolioUpdate(is_featured=not portfolio.is_featured))
     return RedirectResponse(url="/admin/dashboard", status_code=302)
+
+@app.get("/admin/settings", response_class=HTMLResponse)
+async def admin_settings(request: Request, db: Session = Depends(get_db)):
+    from app.models.setting import SiteSetting, HeroImage
+    settings_list = {r.key: r.value for r in db.query(SiteSetting).all()}
+    hero_images = db.query(HeroImage).order_by(HeroImage.sort_order).all()
+    site_settings = get_site_settings()
+    return templates.TemplateResponse(
+        request=request,
+        name="admin/settings.html",
+        context={
+            "request": request,
+            "settings_list": settings_list,
+            "hero_images": hero_images,
+            "settings": site_settings,
+        }
+    )
+
+@app.post("/admin/settings/taglines")
+async def update_taglines(
+    request: Request,
+    taglines: str = Form(...),
+    db: Session = Depends(get_db)
+):
+    from app.models.setting import SiteSetting
+    row = db.query(SiteSetting).filter(SiteSetting.key == "tagline").first()
+    if row:
+        row.value = taglines
+    else:
+        db.add(SiteSetting(key="tagline", value=taglines))
+    db.commit()
+    return RedirectResponse(url="/admin/settings", status_code=302)
+
+@app.post("/admin/settings/logo")
+async def upload_logo(
+    request: Request,
+    file: UploadFile = File(...),
+    db: Session = Depends(get_db)
+):
+    from app.models.setting import SiteSetting
+    upload_dir = Path("app/static/uploads")
+    upload_dir.mkdir(parents=True, exist_ok=True)
+    ext = Path(file.filename).suffix or ".png"
+    filename = f"logo{ext}"
+    filepath = upload_dir / filename
+    with open(filepath, "wb") as f:
+        shutil.copyfileobj(file.file, f)
+    row = db.query(SiteSetting).filter(SiteSetting.key == "logo_path").first()
+    if row:
+        row.value = f"/static/uploads/{filename}"
+    else:
+        db.add(SiteSetting(key="logo_path", value=f"/static/uploads/{filename}"))
+    db.commit()
+    return RedirectResponse(url="/admin/settings", status_code=302)
+
+@app.post("/admin/settings/hero")
+async def upload_hero_image(
+    request: Request,
+    file: UploadFile = File(...),
+    caption: str = Form(None),
+    db: Session = Depends(get_db)
+):
+    from app.models.setting import HeroImage
+    from sqlalchemy import func as sa_func
+    upload_dir = Path("app/static/uploads/hero")
+    upload_dir.mkdir(parents=True, exist_ok=True)
+    ext = Path(file.filename).suffix or ".jpg"
+    filename = f"hero_{int(datetime.now().timestamp())}{ext}"
+    filepath = upload_dir / filename
+    with open(filepath, "wb") as f:
+        shutil.copyfileobj(file.file, f)
+    max_order = db.query(sa_func.max(HeroImage.sort_order)).scalar() or 0
+    db.add(HeroImage(
+        image_url=f"/static/uploads/hero/{filename}",
+        caption=caption,
+        sort_order=max_order + 1
+    ))
+    db.commit()
+    return RedirectResponse(url="/admin/settings", status_code=302)
+
+@app.get("/admin/settings/hero/{hero_id}/delete")
+async def delete_hero_image(hero_id: int, db: Session = Depends(get_db)):
+    from app.models.setting import HeroImage
+    img = db.query(HeroImage).filter(HeroImage.id == hero_id).first()
+    if img:
+        filepath = Path("app") / img.image_url.lstrip("/")
+        if filepath.exists():
+            filepath.unlink()
+        db.delete(img)
+        db.commit()
+    return RedirectResponse(url="/admin/settings", status_code=302)
+
+@app.post("/admin/settings/contact")
+async def update_contact(
+    request: Request,
+    email: str = Form(None),
+    phone: str = Form(None),
+    address: str = Form(None),
+    blurb: str = Form(None),
+    db: Session = Depends(get_db)
+):
+    from app.models.setting import SiteSetting
+    updates = {
+        "contact_email": email,
+        "contact_phone": phone,
+        "contact_address": address,
+        "contact_blurb": blurb,
+    }
+    for key, value in updates.items():
+        if value is not None:
+            row = db.query(SiteSetting).filter(SiteSetting.key == key).first()
+            if row:
+                row.value = value
+            else:
+                db.add(SiteSetting(key=key, value=value))
+    db.commit()
+    return RedirectResponse(url="/admin/settings", status_code=302)
 
 @app.post("/admin/projects/{portfolio_id}/upload-image")
 async def upload_portfolio_image(

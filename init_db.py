@@ -2,6 +2,7 @@ from app.db.session import engine, SessionLocal, Base
 from app.models.user import User
 from app.models.portfolio import Portfolio
 from app.models.image import PortfolioImage, TechnicalImage
+from app.models.setting import SiteSetting, HeroImage
 from app.core.security import get_password_hash
 
 def init_db():

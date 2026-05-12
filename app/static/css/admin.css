@@ -332,6 +332,31 @@
 }
 
 /* Responsive */
+/* Settings Page */
+.settings-page h1 {
+    font-family: "Playfair Display", serif;
+    font-size: clamp(1.8rem, 4vw, 2.5rem);
+    font-weight: 400;
+    margin-bottom: 2rem;
+}
+
+.settings-section {
+    margin-bottom: 2rem;
+}
+
+.settings-section h2 {
+    font-family: "Playfair Display", serif;
+    font-size: 1.25rem;
+    font-weight: 400;
+    margin-bottom: 0.5rem;
+}
+
+.settings-hint {
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-bottom: 1rem;
+}
+
 @media (max-width: 760px) {
     .dashboard-header {
         flex-direction: column;

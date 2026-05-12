@@ -11,6 +11,7 @@ from app.schemas.portfolio import PortfolioCreate
 from app.schemas.image import ImageCreate
 from app.crud import portfolio as crud_portfolio
 from app.crud import image as crud_image
+from app.models.setting import SiteSetting, HeroImage
 
 SEED_IMAGES = Path(__file__).parent / "images"
 UPLOADS = Path("app/static/uploads")
@@ -71,6 +72,38 @@ def seed():
 
         print(f"  Created project: {p['name']}")
 
+    existing_settings = {r.key for r in db.query(SiteSetting).all()}
+
+    defaults = {
+        "tagline": "Design is not only what we see, but what quietly transforms how we dwell.",
+        "logo_path": "/static/logo.png",
+        "contact_email": "dadamoura@cloud.com",
+        "contact_phone": "+351 931 110 004",
+        "contact_address": "Rua Augusta, 123\nLisbon, Portugal",
+        "contact_blurb": "We would love to hear from you. Whether you have a project in mind or simply want to learn more about our studio, feel free to reach out.",
+    }
+
+    for key, value in defaults.items():
+        if key not in existing_settings:
+            db.add(SiteSetting(key=key, value=value))
+            print(f"  Created setting: {key}")
+
+    hero_count = db.query(HeroImage).count()
+    if hero_count == 0:
+        src = SEED_IMAGES / "09210756-c724-450f-a139-cd5823c875bb.jpg"
+        if src.exists():
+            hero_dir = UPLOADS / "hero"
+            hero_dir.mkdir(parents=True, exist_ok=True)
+            fname = f"hero_default{src.suffix}"
+            shutil.copy2(src, hero_dir / fname)
+            db.add(HeroImage(
+                image_url=f"/static/uploads/hero/{fname}",
+                caption="",
+                sort_order=0,
+            ))
+            print("  Created default hero image")
+
+    db.commit()
     db.close()
     print("Done seeding.")
 

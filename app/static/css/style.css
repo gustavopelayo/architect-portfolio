@@ -55,10 +55,18 @@ header {
 }
 
 .logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
     font-family: "Playfair Display", serif;
     font-size: 1rem;
     letter-spacing: 0.18em;
     text-transform: uppercase;
+}
+
+.logo-icon {
+    height: 2.5rem;
+    width: auto;
 }
 
 .nav-links {
@@ -117,6 +125,36 @@ main {
 }
 .hero-image:hover {
     filter: grayscale(0%);
+}
+
+.hero-slideshow {
+    position: relative;
+}
+
+.hero-slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: min(72vh, 760px);
+    object-fit: cover;
+    display: block;
+    filter: grayscale(100%);
+    opacity: 0;
+    transition: opacity 1s ease, filter 0.3s ease;
+}
+
+.hero-slide.active {
+    opacity: 1;
+    position: relative;
+}
+
+.hero-slide:hover {
+    filter: grayscale(0%);
+}
+
+#rotating-tagline {
+    transition: opacity 0.3s ease;
 }
 
 .hero-content {

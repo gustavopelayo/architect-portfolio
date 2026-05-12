@@ -1,0 +1,92 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}Site Settings - Admin{% endblock %}
+
+{% block content %}
+<section class="settings-page">
+    <h1>Site Settings</h1>
+
+    <section class="settings-section">
+        <h2>Taglines</h2>
+        <p class="settings-hint">One per line. They'll cycle on the front page.</p>
+        <form action="/admin/settings/taglines" method="POST">
+            <div class="form-group">
+                <textarea name="taglines" rows="6">{{ settings_list.get('tagline', '') }}</textarea>
+            </div>
+            <button type="submit">Save Taglines</button>
+        </form>
+    </section>
+
+    <hr class="section-divider">
+
+    <section class="settings-section">
+        <h2>Logo</h2>
+        <p class="settings-hint">Current: {{ settings_list.get('logo_path', '/static/logo.png') }}</p>
+        <form action="/admin/settings/logo" method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+                <input type="file" name="file" accept="image/png,image/svg+xml,image/jpeg" required>
+            </div>
+            <button type="submit">Upload Logo</button>
+        </form>
+    </section>
+
+    <hr class="section-divider">
+
+    <section class="settings-section">
+        <h2>Hero Images</h2>
+
+        {% if hero_images %}
+        <div class="current-media">
+            {% for img in hero_images %}
+            <div class="media-card">
+                <img src="{{ img.image_url }}" alt="{{ img.caption or '' }}" style="height:120px">
+                <div class="media-card-body">
+                    <span class="caption">{{ img.caption or 'No caption' }}</span>
+                    <a href="/admin/settings/hero/{{ img.id }}/delete" class="btn-delete-sm" onclick="return confirm('Delete this hero image?')">Remove</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="empty-state">No hero images yet.</p>
+        {% endif %}
+
+        <form action="/admin/settings/hero" method="POST" enctype="multipart/form-data" class="upload-form">
+            <div class="form-group">
+                <label for="hero_file">Add Hero Image</label>
+                <input type="file" id="hero_file" name="file" required>
+            </div>
+            <div class="form-group">
+                <label for="hero_caption">Caption (optional)</label>
+                <input type="text" id="hero_caption" name="caption">
+            </div>
+            <button type="submit" class="btn-upload">Upload</button>
+        </form>
+    </section>
+
+    <hr class="section-divider">
+
+    <section class="settings-section">
+        <h2>Contact Info</h2>
+        <form action="/admin/settings/contact" method="POST">
+            <div class="form-group">
+                <label for="contact_email">Email</label>
+                <input type="email" id="contact_email" name="email" value="{{ settings_list.get('contact_email', '') }}">
+            </div>
+            <div class="form-group">
+                <label for="contact_phone">Phone</label>
+                <input type="text" id="contact_phone" name="phone" value="{{ settings_list.get('contact_phone', '') }}">
+            </div>
+            <div class="form-group">
+                <label for="contact_address">Address</label>
+                <textarea id="contact_address" name="address" rows="3">{{ settings_list.get('contact_address', '') }}</textarea>
+            </div>
+            <div class="form-group">
+                <label for="contact_blurb">Blurb</label>
+                <textarea id="contact_blurb" name="blurb" rows="4">{{ settings_list.get('contact_blurb', '') }}</textarea>
+            </div>
+            <button type="submit">Save Contact Info</button>
+        </form>
+    </section>
+</section>
+{% endblock %}
