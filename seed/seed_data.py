@@ -81,6 +81,8 @@ def seed():
         "contact_phone": "+351 931 110 004",
         "contact_address": "Rua Augusta, 123\nLisbon, Portugal",
         "contact_blurb": "We would love to hear from you. Whether you have a project in mind or simply want to learn more about our studio, feel free to reach out.",
+        "about_title": "About\nDaniel Moura",
+        "about_body": "Design is not only what we see, but what quietly transforms how we dwell.\n\nDaniel Moura is an architecture practice with projects spanning residential, commercial, and cultural spaces. We create holistic concepts that translate context, functionality, and personality into structures that feel both effortless and refined.\n\nOur approach is rooted in detail: from the grand scale of spatial planning to the subtle nuances of materiality and light, each element is crafted to evoke a tactile and emotional response. Above all, our work seeks to create harmony \u2014 spaces that inspire, comfort, and endure.",
     }
 
     for key, value in defaults.items():

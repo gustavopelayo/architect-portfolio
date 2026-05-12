@@ -307,6 +307,44 @@ async def update_contact(
     db.commit()
     return RedirectResponse(url="/admin/settings", status_code=302)
 
+@app.post("/admin/settings/about")
+async def update_about(
+    request: Request,
+    title: str = Form(None),
+    body: str = Form(None),
+    file: UploadFile = File(None),
+    db: Session = Depends(get_db)
+):
+    from app.models.setting import SiteSetting
+    if title is not None:
+        row = db.query(SiteSetting).filter(SiteSetting.key == "about_title").first()
+        if row:
+            row.value = title
+        else:
+            db.add(SiteSetting(key="about_title", value=title))
+    if body is not None:
+        row = db.query(SiteSetting).filter(SiteSetting.key == "about_body").first()
+        if row:
+            row.value = body
+        else:
+            db.add(SiteSetting(key="about_body", value=body))
+    if file and file.filename:
+        upload_dir = Path("app/static/uploads")
+        upload_dir.mkdir(parents=True, exist_ok=True)
+        ext = Path(file.filename).suffix or ".jpg"
+        filename = f"about_image{ext}"
+        filepath = upload_dir / filename
+        with open(filepath, "wb") as f:
+            shutil.copyfileobj(file.file, f)
+        img_url = f"/static/uploads/{filename}"
+        row = db.query(SiteSetting).filter(SiteSetting.key == "about_image").first()
+        if row:
+            row.value = img_url
+        else:
+            db.add(SiteSetting(key="about_image", value=img_url))
+    db.commit()
+    return RedirectResponse(url="/admin/settings", status_code=302)
+
 @app.post("/admin/projects/{portfolio_id}/upload-image")
 async def upload_portfolio_image(
     portfolio_id: int,

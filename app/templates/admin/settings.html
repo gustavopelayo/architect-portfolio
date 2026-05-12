@@ -88,5 +88,32 @@
             <button type="submit">Save Contact Info</button>
         </form>
     </section>
+
+    <hr class="section-divider">
+
+    <section class="settings-section">
+        <h2>About Page</h2>
+        <form action="/admin/settings/about" method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="about_title">Title</label>
+                <input type="text" id="about_title" name="title" value="{{ settings_list.get('about_title', 'About\nDaniel Moura') }}">
+                <p class="settings-hint">Use \n for line breaks (e.g. About\nDaniel Moura)</p>
+            </div>
+            <div class="form-group">
+                <label for="about_body">Body Text</label>
+                <textarea id="about_body" name="body" rows="8">{{ settings_list.get('about_body', '') }}</textarea>
+                <p class="settings-hint">Separate paragraphs with a blank line.</p>
+            </div>
+            <div class="form-group">
+                <label for="about_image">About Image</label>
+                <input type="file" id="about_image" name="file" accept="image/*">
+                {% set about_img = settings_list.get('about_image', '') %}
+                {% if about_img %}
+                <p class="settings-hint">Current: {{ about_img }}</p>
+                {% endif %}
+            </div>
+            <button type="submit">Save About Page</button>
+        </form>
+    </section>
 </section>
 {% endblock %}

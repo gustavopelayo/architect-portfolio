@@ -556,12 +556,25 @@ footer {
 
 /* Contact form success message */
 .success-message {
-    background: var(--surface);
-    border: 1px solid var(--line);
-    padding: 1.5rem;
-    margin-top: 1rem;
-    color: var(--text);
-    font-size: 0.9rem;
-    border-left: 3px solid var(--accent);
+    background: #f0f7f0;
+    border: 1px solid #d4e6d4;
+    padding: 1.5rem 2rem;
+    margin-top: 1.5rem;
+    text-align: center;
 }
+
+.success-message p {
+    color: #2d5a2d;
+    font-family: "Playfair Display", serif;
+    font-size: 1.05rem;
+    font-style: italic;
+    line-height: 1.5;
+}
+
+.success-message::before {
+    content: "\2714";
+    display: block;
+    font-size: 1.5rem;
+    color: #4a8c4a;
+    margin-bottom: 0.5rem;
 }

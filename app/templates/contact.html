@@ -3,6 +3,12 @@
 {% block title %}Contact - Daniel Moura{% endblock %}
 
 {% block content %}
+<style>
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-12px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+</style>
 <section class="contact-header">
     <h1>Get in<br>Touch</h1>
 </section>
@@ -26,8 +32,12 @@
         </form>
         
         {% if request.query_params.get('success') == '1' %}
-        <div class="success-message">
-            <p>Thank you for your message! I'll get back to you soon.</p>
+        <div style="animation:slideDown 0.5s ease-out;background:var(--surface);border:1px solid var(--line);padding:2.5rem 2rem;margin-top:2rem;text-align:center;">
+            <div style="width:48px;height:48px;border-radius:50%;background:#1f1f1e;display:flex;align-items:center;justify-content:center;margin:0 auto 1.25rem;">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M4 10.5L8 14.5L16 5.5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <p style="font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--text);margin:0 0 0.35rem;font-weight:400;">Thank you for your message</p>
+            <p style="font-size:0.85rem;color:var(--muted);margin:0;letter-spacing:0.02em;">I'll get back to you soon.</p>
         </div>
         {% endif %}
     </div>
