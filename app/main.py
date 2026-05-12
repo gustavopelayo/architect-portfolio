@@ -395,12 +395,26 @@ async def upload_technical_drawing(
     upload_dir = Path("app/static/uploads") / str(portfolio_id)
     upload_dir.mkdir(parents=True, exist_ok=True)
     
-    file_extension = Path(file.filename).suffix or ".jpg"
-    filename = f"{portfolio_id}_tech_{int(datetime.now().timestamp())}{file_extension}"
-    file_path = upload_dir / filename
+    suffix = Path(file.filename).suffix.lower()
+    ts = int(datetime.now().timestamp())
     
-    with open(file_path, "wb") as buffer:
-        shutil.copyfileobj(file.file, buffer)
+    if suffix == ".pdf":
+        import fitz
+        temp = upload_dir / f"temp_{ts}.pdf"
+        with open(temp, "wb") as f:
+            shutil.copyfileobj(file.file, f)
+        doc = fitz.open(temp)
+        page = doc[0]
+        pix = page.get_pixmap(matrix=fitz.Matrix(2, 2))
+        filename = f"{portfolio_id}_tech_{ts}.png"
+        pix.save(str(upload_dir / filename))
+        doc.close()
+        temp.unlink()
+    else:
+        filename = f"{portfolio_id}_tech_{ts}{suffix}"
+        file_path = upload_dir / filename
+        with open(file_path, "wb") as f:
+            shutil.copyfileobj(file.file, f)
     
     from app.crud import image as crud_image
     from app.schemas.image import ImageCreate
