@@ -17,7 +17,8 @@
         <a href="/portfolio/{{ portfolio.id }}">
             <div class="project-thumb-wrap">
                 {% if portfolio.images %}
-                <img src="{{ portfolio.images[0].image_url }}" alt="{{ portfolio.name }}">
+                {% set cover = portfolio.images | selectattr("is_cover", "equalto", true) | first %}
+                <img src="{{ (cover or portfolio.images[0]).image_url }}" alt="{{ portfolio.name }}">
                 {% else %}
                 <div class="project-thumb-placeholder"></div>
                 {% endif %}

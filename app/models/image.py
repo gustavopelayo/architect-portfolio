@@ -10,6 +10,7 @@ class PortfolioImage(Base):
     portfolio_id = Column(Integer, ForeignKey("portfolios.id"))
     image_url = Column(String(255), nullable=False)
     is_technical = Column(Boolean, default=False)  # False = regular photo, True = technical drawing
+    is_cover = Column(Boolean, default=False)
     caption = Column(String(255))
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     

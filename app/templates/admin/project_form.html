@@ -39,11 +39,18 @@
         {% if project.images %}
         <div class="current-media">
             {% for image in project.images %}
-            <div class="media-card">
+            <div class="media-card{% if image.is_cover %} is-cover{% endif %}">
                 <img src="{{ image.image_url }}" alt="{{ project.name }}">
                 <div class="media-card-body">
                     <span class="caption">{{ image.caption or 'No caption' }}</span>
-                    <a href="/admin/images/{{ image.id }}/delete" class="btn-delete-sm" onclick="return confirm('Delete this image?')">Remove</a>
+                    <div class="media-card-actions">
+                        {% if image.is_cover %}
+                        <span class="cover-badge">Cover</span>
+                        {% else %}
+                        <a href="/admin/projects/{{ project.id }}/images/{{ image.id }}/set-cover" class="btn-cover">Set as Cover</a>
+                        {% endif %}
+                        <a href="/admin/images/{{ image.id }}/delete" class="btn-delete-sm" onclick="return confirm('Delete this image?')">Remove</a>
+                    </div>
                 </div>
             </div>
             {% endfor %}

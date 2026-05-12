@@ -61,6 +61,10 @@ def seed():
             crud_image.create_portfolio_image(db, pid, ImageCreate(image_url=url, caption=""))
             print(f"  Added image {fname} to '{p['name']}'")
 
+        first_img = db.query(PortfolioImage).filter(PortfolioImage.portfolio_id == pid).order_by(PortfolioImage.id).first()
+        if first_img:
+            first_img.is_cover = True
+
         for fname in p["technical"]:
             src = SEED_IMAGES / fname
             if not src.exists():
