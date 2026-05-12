@@ -14,6 +14,7 @@ develop-eggs/
 venv/
 env/
 ENV/
+.venv/
 
 # IDEs
 .vscode/
@@ -35,7 +36,9 @@ instance/
 .webassets-cache
 # User uploads
 app/static/uploads/
-# Misc
+# Agent / Skills
+.agents/
+skills-lock.json
 cookies.txt
 
 # Logs

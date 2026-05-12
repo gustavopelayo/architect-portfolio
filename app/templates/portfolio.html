@@ -7,15 +7,24 @@
     <h1>Portfolio</h1>
 </section>
 
+<div class="filter-bar">
+    <button id="filterFeatured" class="filter-btn">Featured</button>
+</div>
+
 <div class="projects-grid">
     {% for portfolio in portfolios %}
-    <article class="project-card">
+    <article class="project-card{% if portfolio.is_featured %} is-featured{% endif %}">
         <a href="/portfolio/{{ portfolio.id }}">
-            {% if portfolio.images %}
-            <img src="{{ portfolio.images[0].image_url }}" alt="{{ portfolio.name }}">
-            {% else %}
-            <div style="background:#ece7e0; aspect-ratio:4/5;"></div>
-            {% endif %}
+            <div class="project-thumb-wrap">
+                {% if portfolio.images %}
+                <img src="{{ portfolio.images[0].image_url }}" alt="{{ portfolio.name }}">
+                {% else %}
+                <div class="project-thumb-placeholder"></div>
+                {% endif %}
+                {% if portfolio.is_featured %}
+                <span class="featured-badge">Featured</span>
+                {% endif %}
+            </div>
             <div class="project-info">
                 <h3>{{ portfolio.name }}</h3>
                 <span class="project-year">
@@ -29,4 +38,20 @@
     <p>No projects found.</p>
     {% endfor %}
 </div>
+
+<script>
+const btn = document.getElementById('filterFeatured');
+let showFeaturedOnly = false;
+btn.addEventListener('click', () => {
+    showFeaturedOnly = !showFeaturedOnly;
+    btn.classList.toggle('active', showFeaturedOnly);
+    document.querySelectorAll('.project-card').forEach(card => {
+        if (showFeaturedOnly) {
+            card.style.display = card.classList.contains('is-featured') ? '' : 'none';
+        } else {
+            card.style.display = '';
+        }
+    });
+});
+</script>
 {% endblock %}

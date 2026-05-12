@@ -27,57 +27,75 @@
             <input type="text" id="location" name="location" value="{% if project %}{{ project.location }}{% endif %}">
         </div>
         
-        <div class="form-group checkbox-group">
-            <input type="checkbox" id="is_featured" name="is_featured" {% if project and project.is_featured %}checked{% endif %}>
-            <label for="is_featured">Featured Project</label>
-        </div>
-        
         <button type="submit">{% if project %}Update{% else %}Create{% endif %} Project</button>
     </form>
-    
+
     {% if project %}
-    <section class="image-upload-section">
-        <h2>Project Images</h2>
-        
-        {% if project.images or project.technical_images %}
-        <div class="current-images">
+    <hr class="section-divider">
+
+    <section class="media-section">
+        <h2>Images</h2>
+
+        {% if project.images %}
+        <div class="current-media">
             {% for image in project.images %}
-            <div class="image-item">
+            <div class="media-card">
                 <img src="{{ image.image_url }}" alt="{{ project.name }}">
-                <div class="caption">{{ image.caption or 'No caption' }}</div>
-                <a href="/admin/images/{{ image.id }}/delete" class="btn-delete" onclick="return confirm('Delete this image?')">×</a>
+                <div class="media-card-body">
+                    <span class="caption">{{ image.caption or 'No caption' }}</span>
+                    <a href="/admin/images/{{ image.id }}/delete" class="btn-delete-sm" onclick="return confirm('Delete this image?')">Remove</a>
+                </div>
             </div>
             {% endfor %}
         </div>
-        
+        {% else %}
+        <p class="empty-state">No images yet.</p>
+        {% endif %}
+
+        <form action="/admin/projects/{{ project.id }}/upload-image" method="POST" enctype="multipart/form-data" class="upload-form">
+            <div class="form-group">
+                <label for="image_file">Add Image</label>
+                <input type="file" id="image_file" name="file" required>
+            </div>
+            <div class="form-group">
+                <label for="image_caption">Caption (optional)</label>
+                <input type="text" id="image_caption" name="caption">
+            </div>
+            <button type="submit" class="btn-upload">Upload Image</button>
+        </form>
+    </section>
+
+    <hr class="section-divider">
+
+    <section class="media-section">
+        <h2>Technical Drawings</h2>
+
         {% if project.technical_images %}
-        <h3 style="margin-top: 2rem;">Technical Images</h3>
-        <div class="current-images">
+        <div class="current-media">
             {% for image in project.technical_images %}
-            <div class="image-item">
+            <div class="media-card">
                 <img src="{{ image.image_url }}" alt="{{ project.name }} - Technical">
-                <div class="caption">{{ image.caption or 'No caption' }}</div>
-                <a href="/admin/images/{{ image.id }}/delete" class="btn-delete" onclick="return confirm('Delete this image?')">×</a>
+                <div class="media-card-body">
+                    <span class="caption">{{ image.caption or 'No caption' }}</span>
+                    <a href="/admin/images/{{ image.id }}/delete" class="btn-delete-sm" onclick="return confirm('Delete this technical drawing?')">Remove</a>
+                </div>
             </div>
             {% endfor %}
         </div>
+        {% else %}
+        <p class="empty-state">No technical drawings yet.</p>
         {% endif %}
-        {% endif %}
-        
-        <form action="/admin/projects/{{ project.id }}/upload" method="POST" enctype="multipart/form-data" class="upload-form">
+
+        <form action="/admin/projects/{{ project.id }}/upload-technical" method="POST" enctype="multipart/form-data" class="upload-form">
             <div class="form-group">
-                <label for="file">Upload Image</label>
-                <input type="file" id="file" name="file" required>
+                <label for="tech_file">Add Technical Drawing</label>
+                <input type="file" id="tech_file" name="file" required>
             </div>
             <div class="form-group">
-                <label for="caption">Caption (optional)</label>
-                <input type="text" id="caption" name="caption">
+                <label for="tech_caption">Caption (optional)</label>
+                <input type="text" id="tech_caption" name="caption">
             </div>
-            <div class="form-group checkbox-group">
-                <input type="checkbox" id="is_technical" name="is_technical">
-                <label for="is_technical">Technical Drawing</label>
-            </div>
-            <button type="submit">Upload Image</button>
+            <button type="submit" class="btn-upload">Upload Technical Drawing</button>
         </form>
     </section>
     {% endif %}

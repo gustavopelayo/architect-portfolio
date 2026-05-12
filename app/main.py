@@ -123,7 +123,6 @@ async def create_project(
     description: str = Form(None),
     year: int = Form(None),
     location: str = Form(None),
-    is_featured: bool = Form(False),
     db: Session = Depends(get_db)
 ):
     from app.schemas.portfolio import PortfolioCreate
@@ -132,7 +131,6 @@ async def create_project(
         description=description,
         year=year,
         location=location,
-        is_featured=is_featured
     )
     crud_portfolio.create_portfolio(db=db, portfolio=portfolio_data)
     return RedirectResponse(url="/admin/dashboard", status_code=302)
@@ -156,7 +154,6 @@ async def edit_project(
     description: str = Form(None),
     year: int = Form(None),
     location: str = Form(None),
-    is_featured: bool = Form(False),
     db: Session = Depends(get_db)
 ):
     from app.schemas.portfolio import PortfolioUpdate
@@ -165,7 +162,6 @@ async def edit_project(
         description=description,
         year=year,
         location=location,
-        is_featured=is_featured
     )
     crud_portfolio.update_portfolio(db=db, portfolio_id=portfolio_id, portfolio=portfolio_data)
     return RedirectResponse(url="/admin/dashboard", status_code=302)
@@ -175,24 +171,28 @@ async def delete_project(portfolio_id: int, db: Session = Depends(get_db)):
     crud_portfolio.delete_portfolio(db=db, portfolio_id=portfolio_id)
     return RedirectResponse(url="/admin/dashboard", status_code=302)
 
-@app.post("/admin/projects/{portfolio_id}/upload")
-async def upload_image(
+@app.post("/admin/projects/{portfolio_id}/toggle-featured")
+async def toggle_featured(portfolio_id: int, db: Session = Depends(get_db)):
+    portfolio = crud_portfolio.get_portfolio(db, portfolio_id=portfolio_id)
+    if portfolio:
+        from app.schemas.portfolio import PortfolioUpdate
+        crud_portfolio.update_portfolio(db, portfolio_id, PortfolioUpdate(is_featured=not portfolio.is_featured))
+    return RedirectResponse(url="/admin/dashboard", status_code=302)
+
+@app.post("/admin/projects/{portfolio_id}/upload-image")
+async def upload_portfolio_image(
     portfolio_id: int,
     file: UploadFile = File(...),
     caption: str = Form(None),
-    is_technical: bool = Form(False),
     db: Session = Depends(get_db)
 ):
-    # Verify portfolio exists
     portfolio = crud_portfolio.get_portfolio(db, portfolio_id=portfolio_id)
     if not portfolio:
         return RedirectResponse(url="/admin/dashboard", status_code=302)
     
-    # Create upload directory
     upload_dir = Path("app/static/uploads") / str(portfolio_id)
     upload_dir.mkdir(parents=True, exist_ok=True)
     
-    # Save file
     file_extension = Path(file.filename).suffix or ".jpg"
     filename = f"{portfolio_id}_{int(datetime.now().timestamp())}{file_extension}"
     file_path = upload_dir / filename
@@ -200,21 +200,42 @@ async def upload_image(
     with open(file_path, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
     
-    # Create image record
     from app.crud import image as crud_image
     from app.schemas.image import ImageCreate
     
     image_url = f"/static/uploads/{portfolio_id}/{filename}"
-    image_data = ImageCreate(
-        image_url=image_url,
-        caption=caption,
-        is_technical=is_technical
-    )
+    image_data = ImageCreate(image_url=image_url, caption=caption)
+    crud_image.create_portfolio_image(db=db, portfolio_id=portfolio_id, image=image_data)
     
-    if is_technical:
-        crud_image.create_technical_image(db=db, portfolio_id=portfolio_id, image=image_data)
-    else:
-        crud_image.create_portfolio_image(db=db, portfolio_id=portfolio_id, image=image_data)
+    return RedirectResponse(url=f"/admin/projects/{portfolio_id}/edit", status_code=302)
+
+@app.post("/admin/projects/{portfolio_id}/upload-technical")
+async def upload_technical_drawing(
+    portfolio_id: int,
+    file: UploadFile = File(...),
+    caption: str = Form(None),
+    db: Session = Depends(get_db)
+):
+    portfolio = crud_portfolio.get_portfolio(db, portfolio_id=portfolio_id)
+    if not portfolio:
+        return RedirectResponse(url="/admin/dashboard", status_code=302)
+    
+    upload_dir = Path("app/static/uploads") / str(portfolio_id)
+    upload_dir.mkdir(parents=True, exist_ok=True)
+    
+    file_extension = Path(file.filename).suffix or ".jpg"
+    filename = f"{portfolio_id}_tech_{int(datetime.now().timestamp())}{file_extension}"
+    file_path = upload_dir / filename
+    
+    with open(file_path, "wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+    
+    from app.crud import image as crud_image
+    from app.schemas.image import ImageCreate
+    
+    image_url = f"/static/uploads/{portfolio_id}/{filename}"
+    image_data = ImageCreate(image_url=image_url, caption=caption)
+    crud_image.create_technical_image(db=db, portfolio_id=portfolio_id, image=image_data)
     
     return RedirectResponse(url=f"/admin/projects/{portfolio_id}/edit", status_code=302)
 

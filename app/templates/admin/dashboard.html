@@ -25,7 +25,13 @@
             <td><a href="/portfolio/{{ project.id }}">{{ project.name }}</a></td>
             <td>{{ project.year or '-' }}</td>
             <td>{{ project.location or '-' }}</td>
-            <td>{% if project.is_featured %}Yes{% else %}No{% endif %}</td>
+            <td>
+                <form action="/admin/projects/{{ project.id }}/toggle-featured" method="POST" style="margin:0">
+                    <button type="submit" class="btn-featured {% if project.is_featured %}on{% else %}off{% endif %}">
+                        {% if project.is_featured %}Featured{% else %}Set Featured{% endif %}
+                    </button>
+                </form>
+            </td>
             <td>
                 <a href="/admin/projects/{{ project.id }}/edit" class="btn-edit">Edit</a>
                 <a href="/admin/projects/{{ project.id }}/delete" class="btn-delete" onclick="return confirm('Are you sure?')">Delete</a>

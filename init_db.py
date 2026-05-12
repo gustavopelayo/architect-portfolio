@@ -1,6 +1,7 @@
 from app.db.session import engine, SessionLocal, Base
 from app.models.user import User
 from app.models.portfolio import Portfolio
+from app.models.image import PortfolioImage, TechnicalImage
 from app.core.security import get_password_hash
 
 def init_db():
@@ -21,22 +22,8 @@ def init_db():
         db.commit()
         print("Admin user created")
     
-    # Create sample portfolio if not exists
-    sample_portfolio = db.query(Portfolio).filter(Portfolio.name == "Sample Project").first()
-    if not sample_portfolio:
-        sample_portfolio = Portfolio(
-            name="Sample Project",
-            description="This is a sample architectural project to demonstrate the portfolio functionality.",
-            year=2023,
-            location="Sample City",
-            is_featured=True
-        )
-        db.add(sample_portfolio)
-        db.commit()
-        print("Sample portfolio created")
-    
     db.close()
-    print("Database initialized successfully")
+    print("Database initialized successfully — run `python seed/seed_data.py` to add sample projects")
 
 if __name__ == "__main__":
     init_db()
