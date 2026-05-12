@@ -16,10 +16,10 @@ jobs:
           username: ${{ secrets.NAS_USER }}
           key: ${{ secrets.NAS_SSH_KEY }}
           script: |
-            cd ~/dada-moura-portfolio
+            cd ~/docker-apps/dada-moura-portfolio
             git pull origin main
-            docker compose up -d --build
+            sudo docker compose up -d --build
             sleep 3
-            docker compose exec -T app python seed/seed_data.py || true
-            docker compose exec -T app python init_db.py || true
-            docker image prune -f
+            sudo docker compose exec -T app python seed/seed_data.py || true
+            sudo docker compose exec -T app python init_db.py || true
+            sudo docker image prune -f
