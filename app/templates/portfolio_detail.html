@@ -6,38 +6,48 @@
 <section class="project-header">
     <h1>{{ portfolio.name }}</h1>
     <div class="project-meta">
-        {% if portfolio.year %}<span>Year: {{ portfolio.year }}</span>{% endif %}
-        {% if portfolio.location %}<span>Location: {{ portfolio.location }}</span>{% endif %}
+        {% if portfolio.year %}<span>{{ portfolio.year }}</span>{% endif %}
+        {% if portfolio.location %}<span>{{ portfolio.location }}</span>{% endif %}
     </div>
 </section>
 
-{% if portfolio.images %}
-<section class="project-gallery">
-    <div class="image-grid-main">
-        {% for image in portfolio.images %}
-        <div class="image-item">
-            <img src="{{ image.image_url }}" alt="{{ portfolio.name }}">
-            {% if image.caption %}
-            <div class="image-caption">{{ image.caption }}</div>
+<section class="dual-gallery">
+    <div class="gallery-col">
+        <h2>Photos</h2>
+        <div class="gallery-viewport" data-index="0" data-total="{{ portfolio.images | length }}">
+            {% if portfolio.images %}
+            {% for image in portfolio.images %}
+            <img src="{{ image.image_url }}" alt="{{ portfolio.name }}" class="gallery-img{% if loop.first %} active{% endif %}">
+            {% endfor %}
+            {% else %}
+            <div class="gallery-empty">No photos</div>
             {% endif %}
         </div>
-        {% endfor %}
-    </div>
-</section>
-{% endif %}
-
-{% if portfolio.technical_images %}
-<section class="technical-section">
-    <h2>Technical Drawings</h2>
-    <div class="image-grid-technical">
-        {% for image in portfolio.technical_images %}
-        <div class="image-item">
-            <img src="{{ image.image_url }}" alt="{{ portfolio.name }} - Technical">
+        <div class="gallery-counter">
+            {% if portfolio.images %}
+            <span class="counter-current">1</span> / <span class="counter-total">{{ portfolio.images | length }}</span>
+            {% endif %}
         </div>
-        {% endfor %}
+    </div>
+
+    <div class="gallery-col">
+        <h2>Technical</h2>
+        <div class="gallery-viewport" data-index="0" data-total="{{ portfolio.technical_images | length }}">
+            {% if portfolio.technical_images %}
+            {% for image in portfolio.technical_images %}
+            <img src="{{ image.image_url }}" alt="{{ portfolio.name }} - Technical" class="gallery-img{% if loop.first %} active{% endif %}">
+            {% endfor %}
+            {% else %}
+            <div class="gallery-empty">No technical drawings</div>
+            {% endif %}
+        </div>
+        <div class="gallery-counter">
+            {% if portfolio.technical_images %}
+            <span class="counter-current">1</span> / <span class="counter-total">{{ portfolio.technical_images | length }}</span>
+            {% endif %}
+        </div>
     </div>
 </section>
-{% endif %}
 
 {% if portfolio.description %}
 <section class="project-description">
@@ -46,4 +56,22 @@
     </div>
 </section>
 {% endif %}
+
+<script>
+document.querySelectorAll('.gallery-viewport').forEach(function(vp) {
+    var imgs = vp.querySelectorAll('.gallery-img');
+    var col = vp.closest('.gallery-col');
+    var counter = col ? col.querySelector('.counter-current') : null;
+    var idx = 0;
+
+    if (imgs.length < 2) return;
+
+    vp.addEventListener('click', function() {
+        imgs[idx].classList.remove('active');
+        idx = (idx + 1) % imgs.length;
+        imgs[idx].classList.add('active');
+        if (counter) counter.textContent = idx + 1;
+    });
+});
+</script>
 {% endblock %}
