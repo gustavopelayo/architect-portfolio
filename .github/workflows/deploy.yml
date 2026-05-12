@@ -12,6 +12,7 @@ jobs:
       - name: Deploy
         run: |
           cd ~/docker-apps/dada-moura-portfolio
+          git reset --hard HEAD
           git pull origin main
           sudo docker compose up -d --build
           sleep 3
