@@ -14,8 +14,14 @@ from app.db.session import get_db
 from app.core.security import authenticate_user, create_access_token
 from app.crud import portfolio as crud_portfolio
 from app.core.settings_helper import get_site_settings
+from app.db.base import Base
+from app.db.session import engine
 
 app = FastAPI(title="Architect Portfolio")
+
+@app.on_event("startup")
+def on_startup():
+    Base.metadata.create_all(bind=engine)
 
 # Mount static files
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
