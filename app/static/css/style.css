@@ -642,6 +642,31 @@ footer {
     color: var(--muted);
 }
 
+.gallery-pdf {
+    aspect-ratio: 4 / 3;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.gallery-pdf a {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    text-decoration: none;
+    color: var(--muted);
+    font-size: 0.85rem;
+    transition: color 0.2s ease;
+}
+
+.gallery-pdf a:hover {
+    color: var(--text);
+}
+
 @media (max-width: 760px) {
     .dual-gallery {
         grid-template-columns: 1fr;

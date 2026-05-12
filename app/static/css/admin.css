@@ -243,6 +243,38 @@
     display: block;
 }
 
+.media-card-pdf {
+    height: 160px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg);
+    border-bottom: 1px solid var(--line);
+}
+
+.media-card-pdf a {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    color: var(--muted);
+    transition: color 150ms ease;
+}
+
+.media-card-pdf a:hover {
+    color: var(--text);
+}
+
+.pdf-icon {
+    display: flex;
+}
+
+.pdf-label {
+    font-size: 0.8rem;
+    text-align: center;
+}
+
 .media-card-body {
     padding: 0.6rem 0.75rem;
     display: flex;
