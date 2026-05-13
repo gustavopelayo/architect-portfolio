@@ -7,7 +7,10 @@
     <div class="split-half split-left" data-side="photos">
         {% if portfolio.images %}
         {% for image in portfolio.images %}
-        <img src="{{ image.image_url }}" alt="{{ portfolio.name }}" class="split-img{% if loop.first %} active{% endif %}">
+        <div class="split-img-wrap{% if loop.first %} active{% endif %}">
+            <img src="{{ image.image_url }}" alt="{{ portfolio.name }}" class="split-img">
+            {% if image.caption %}<span class="split-caption">{{ image.caption }}</span>{% endif %}
+        </div>
         {% endfor %}
         {% if portfolio.images|length > 1 %}
         <span class="split-counter"><span class="counter-cur">1</span>&thinsp;/&thinsp;<span class="counter-total">{{ portfolio.images | length }}</span></span>
@@ -25,7 +28,10 @@
     <div class="split-half split-right" data-side="technical">
         {% if portfolio.technical_images %}
         {% for image in portfolio.technical_images %}
-        <img src="{{ image.image_url }}" alt="{{ portfolio.name }} - Technical" class="split-img{% if loop.first %} active{% endif %}">
+        <div class="split-img-wrap{% if loop.first %} active{% endif %}">
+            <img src="{{ image.image_url }}" alt="{{ portfolio.name }} - Technical" class="split-img">
+            {% if image.caption %}<span class="split-caption">{{ image.caption }}</span>{% endif %}
+        </div>
         {% endfor %}
         {% if portfolio.technical_images|length > 1 %}
         <span class="split-counter"><span class="counter-cur">1</span>&thinsp;/&thinsp;<span class="counter-total">{{ portfolio.technical_images | length }}</span></span>
@@ -77,6 +83,7 @@
     var fsClose = fullscreen.querySelector('.fullscreen-close');
 
     document.querySelectorAll('.split-half').forEach(function(side) {
+        var wraps = side.querySelectorAll('.split-img-wrap');
         var imgs = side.querySelectorAll('.split-img');
         var thumbs = side.querySelectorAll('.thumb-img');
         var counter = side.querySelector('.split-counter');
@@ -84,10 +91,10 @@
         var idx = 0;
 
         function show(i) {
-            imgs[idx].classList.remove('active');
+            wraps[idx].classList.remove('active');
             thumbs[idx].classList.remove('active');
             idx = i;
-            imgs[idx].classList.add('active');
+            wraps[idx].classList.add('active');
             thumbs[idx].classList.add('active');
             if (curSpan) curSpan.textContent = idx + 1;
         }
@@ -99,11 +106,11 @@
             });
         }
 
-        imgs.forEach(function(img, i) {
-            img.addEventListener('click', function(e) {
+        wraps.forEach(function(w, i) {
+            w.addEventListener('click', function(e) {
                 e.stopPropagation();
                 if (side.classList.contains('strip-open')) return;
-                show((idx + 1) % imgs.length);
+                show((idx + 1) % wraps.length);
             });
         });
 
