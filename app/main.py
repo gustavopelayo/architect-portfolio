@@ -7,6 +7,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 import uvicorn
 import shutil
+import uuid
 from pathlib import Path
 from datetime import datetime
 from app.api.v1.endpoints import portfolio, auth
@@ -262,7 +263,7 @@ async def upload_hero_image(
     upload_dir = Path("app/static/uploads/hero")
     upload_dir.mkdir(parents=True, exist_ok=True)
     ext = Path(file.filename).suffix or ".jpg"
-    filename = f"hero_{int(datetime.now().timestamp())}{ext}"
+    filename = f"hero_{uuid.uuid4().hex[:12]}{ext}"
     filepath = upload_dir / filename
     with open(filepath, "wb") as f:
         shutil.copyfileobj(file.file, f)
@@ -366,7 +367,7 @@ async def upload_portfolio_image(
     upload_dir.mkdir(parents=True, exist_ok=True)
     
     file_extension = Path(file.filename).suffix or ".jpg"
-    filename = f"{portfolio_id}_{int(datetime.now().timestamp())}{file_extension}"
+    filename = f"{portfolio_id}_{uuid.uuid4().hex[:12]}{file_extension}"
     file_path = upload_dir / filename
     
     with open(file_path, "wb") as buffer:
@@ -396,22 +397,22 @@ async def upload_technical_drawing(
     upload_dir.mkdir(parents=True, exist_ok=True)
     
     suffix = Path(file.filename).suffix.lower()
-    ts = int(datetime.now().timestamp())
+    uid = uuid.uuid4().hex[:12]
     
     if suffix == ".pdf":
         import fitz
-        temp = upload_dir / f"temp_{ts}.pdf"
+        temp = upload_dir / f"temp_{uid}.pdf"
         with open(temp, "wb") as f:
             shutil.copyfileobj(file.file, f)
         doc = fitz.open(temp)
         page = doc[0]
         pix = page.get_pixmap(matrix=fitz.Matrix(2, 2))
-        filename = f"{portfolio_id}_tech_{ts}.png"
+        filename = f"{portfolio_id}_tech_{uid}.png"
         pix.save(str(upload_dir / filename))
         doc.close()
         temp.unlink()
     else:
-        filename = f"{portfolio_id}_tech_{ts}{suffix}"
+        filename = f"{portfolio_id}_tech_{uid}{suffix}"
         file_path = upload_dir / filename
         with open(file_path, "wb") as f:
             shutil.copyfileobj(file.file, f)

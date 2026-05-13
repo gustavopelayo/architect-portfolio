@@ -24,8 +24,22 @@ PROJECTS = [
         "year": 2025,
         "location": "Kyoto, Japan",
         "is_featured": True,
-        "images": ["09210756-c724-450f-a139-cd5823c875bb.jpg", "390a780f-125e-4044-bbf3-a74ed2068f75.jpg", "ccf47c27-a732-47a3-b5ec-d891a4a0b2f4.jpg"],
-        "technical": ["ed09037f-dfc5-4857-bad9-14fc39d51d22.jpg", "63ae46f7-3ed7-4f53-9ae8-d79c252d729f.jpg"],
+        "images": [
+            "28075505-2dad-4b35-ae40-0085c15bac96.jpeg",
+            "f79f8d1b-3882-4faf-b9ae-95533f602906.jpeg",
+            "d9f7e061-4c70-460f-9d8d-9cdb577478de.jpeg",
+            "0688972f-2372-416e-ad1f-fec7219d2676.jpeg",
+            "a93dc905-df98-4818-8493-5105807b1c21.jpeg",
+        ],
+        "technical": [
+            "f1551cab-f242-4f31-a586-540443fd3ecb.pdf",
+            "4fb38469-96d2-4faa-996a-a6c98f5693c8.pdf",
+            "c5a2a7ee-e687-48b7-92cf-74642a1ac87e.pdf",
+            "b89499f8-689a-4e51-a198-e96ea9dfb1f7.pdf",
+            "7e034af1-c3ea-4452-9df2-6bd04f70bb5a.pdf",
+            "61ef4b67-2f41-44db-a956-146f4b83f245.pdf",
+            "9cf8e72c-3331-4b7d-876e-3b80f4b85a16.pdf",
+        ],
     },
 ]
 
@@ -72,8 +86,18 @@ def seed():
                 continue
             tech_dest = dest / "technical"
             tech_dest.mkdir(parents=True, exist_ok=True)
-            shutil.copy2(src, tech_dest / fname)
-            url = f"/static/uploads/{pid}/technical/{fname}"
+            if src.suffix.lower() == ".pdf":
+                import fitz
+                out_name = src.stem + ".png"
+                doc = fitz.open(src)
+                page = doc[0]
+                pix = page.get_pixmap(matrix=fitz.Matrix(2, 2))
+                pix.save(str(tech_dest / out_name))
+                doc.close()
+            else:
+                out_name = fname
+                shutil.copy2(src, tech_dest / fname)
+            url = f"/static/uploads/{pid}/technical/{out_name}"
             crud_image.create_technical_image(db, pid, ImageCreate(image_url=url, caption=""))
             print(f"  Added technical drawing {fname} to '{p['name']}'")
 
@@ -99,7 +123,7 @@ def seed():
 
     hero_count = db.query(HeroImage).count()
     if hero_count == 0:
-        src = SEED_PHOTOS / "09210756-c724-450f-a139-cd5823c875bb.jpg"
+        src = SEED_PHOTOS / "28075505-2dad-4b35-ae40-0085c15bac96.jpeg"
         if src.exists():
             hero_dir = UPLOADS / "hero"
             hero_dir.mkdir(parents=True, exist_ok=True)
