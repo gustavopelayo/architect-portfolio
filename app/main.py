@@ -392,7 +392,7 @@ async def upload_technical_drawing(
     if not portfolio:
         return RedirectResponse(url="/admin/dashboard", status_code=302)
     
-    upload_dir = Path("app/static/uploads") / str(portfolio_id)
+    upload_dir = Path("app/static/uploads") / str(portfolio_id) / "technical"
     upload_dir.mkdir(parents=True, exist_ok=True)
     
     suffix = Path(file.filename).suffix.lower()
@@ -419,7 +419,7 @@ async def upload_technical_drawing(
     from app.crud import image as crud_image
     from app.schemas.image import ImageCreate
     
-    image_url = f"/static/uploads/{portfolio_id}/{filename}"
+    image_url = f"/static/uploads/{portfolio_id}/technical/{filename}"
     image_data = ImageCreate(image_url=image_url, caption=caption)
     crud_image.create_technical_image(db=db, portfolio_id=portfolio_id, image=image_data)
     

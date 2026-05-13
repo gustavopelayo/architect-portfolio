@@ -69,8 +69,10 @@ def seed():
             src = SEED_IMAGES / fname
             if not src.exists():
                 continue
-            shutil.copy2(src, dest / fname)
-            url = f"/static/uploads/{pid}/{fname}"
+            tech_dest = dest / "technical"
+            tech_dest.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(src, tech_dest / fname)
+            url = f"/static/uploads/{pid}/technical/{fname}"
             crud_image.create_technical_image(db, pid, ImageCreate(image_url=url, caption=""))
             print(f"  Added technical drawing {fname} to '{p['name']}'")
 
