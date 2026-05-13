@@ -200,9 +200,12 @@ async def toggle_featured(portfolio_id: int, db: Session = Depends(get_db)):
 @app.get("/admin/settings", response_class=HTMLResponse)
 async def admin_settings(request: Request, db: Session = Depends(get_db)):
     from app.models.setting import SiteSetting, HeroImage
+    from app.models.image import PortfolioImage, TechnicalImage
     settings_list = {r.key: r.value for r in db.query(SiteSetting).all()}
     hero_images = db.query(HeroImage).order_by(HeroImage.sort_order).all()
     site_settings = get_site_settings()
+    project_images = db.query(PortfolioImage).all() + db.query(TechnicalImage).all()
+    existing_hero_urls = {h.image_url for h in hero_images}
     return templates.TemplateResponse(
         request=request,
         name="admin/settings.html",
@@ -211,6 +214,8 @@ async def admin_settings(request: Request, db: Session = Depends(get_db)):
             "settings_list": settings_list,
             "hero_images": hero_images,
             "settings": site_settings,
+            "project_images": project_images,
+            "existing_hero_urls": existing_hero_urls,
         }
     )
 
@@ -285,6 +290,17 @@ async def delete_hero_image(hero_id: int, db: Session = Depends(get_db)):
         if filepath.exists():
             filepath.unlink()
         db.delete(img)
+        db.commit()
+    return RedirectResponse(url="/admin/settings", status_code=302)
+
+@app.get("/admin/settings/hero/add-from-project")
+async def add_hero_from_project(image_url: str, db: Session = Depends(get_db)):
+    from app.models.setting import HeroImage
+    from sqlalchemy import func as sa_func
+    existing = db.query(HeroImage).filter(HeroImage.image_url == image_url).first()
+    if not existing:
+        max_order = db.query(sa_func.max(HeroImage.sort_order)).scalar() or 0
+        db.add(HeroImage(image_url=image_url, sort_order=max_order + 1))
         db.commit()
     return RedirectResponse(url="/admin/settings", status_code=302)
 
