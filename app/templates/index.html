@@ -76,7 +76,9 @@ document.querySelectorAll('.project-thumb-wrap').forEach(function(wrap) {
 
     if (slides.length > 1) {
         document.querySelector('.hero').addEventListener('click', advance);
-        slides.forEach(function(s) { s.addEventListener('click', advance); });
+        slides.forEach(function(s) {
+            s.addEventListener('click', function(e) { e.stopPropagation(); advance(); });
+        });
         setInterval(advance, 6000);
     }
 })();
