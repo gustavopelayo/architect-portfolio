@@ -74,6 +74,7 @@
 <div class="fullscreen-view" id="fullscreenView">
     <span class="fullscreen-close">&times;</span>
     <img src="" alt="" class="fullscreen-img">
+    <span class="fullscreen-caption"></span>
 </div>
 
 <script>
@@ -114,11 +115,14 @@
             });
         });
 
+        var captions = side.querySelectorAll('.split-caption');
+
         thumbs.forEach(function(t, i) {
             t.addEventListener('click', function(e) {
                 e.stopPropagation();
                 show(i);
                 fsImg.src = imgs[i].src;
+                fullscreen.querySelector('.fullscreen-caption').textContent = captions[i] ? captions[i].textContent : '';
                 fullscreen.classList.add('open');
                 side.classList.remove('strip-open');
             });
