@@ -23,8 +23,8 @@ PROJECTS = [
         "year": 2025,
         "location": "Kyoto, Japan",
         "is_featured": True,
-        "images": ["09210756-c724-450f-a139-cd5823c875bb.jpg", "390a780f-125e-4044-bbf3-a74ed2068f75.jpg"],
-        "technical": ["ccf47c27-a732-47a3-b5ec-d891a4a0b2f4.jpg", "ed09037f-dfc5-4857-bad9-14fc39d51d22.jpg", "63ae46f7-3ed7-4f53-9ae8-d79c252d729f.jpg"],
+        "images": ["09210756-c724-450f-a139-cd5823c875bb.jpg", "390a780f-125e-4044-bbf3-a74ed2068f75.jpg", "ccf47c27-a732-47a3-b5ec-d891a4a0b2f4.jpg"],
+        "technical": ["ed09037f-dfc5-4857-bad9-14fc39d51d22.jpg", "63ae46f7-3ed7-4f53-9ae8-d79c252d729f.jpg"],
     },
 ]
 
