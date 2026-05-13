@@ -11,9 +11,8 @@
     </div>
 </section>
 
-<section class="dual-gallery">
-    <div class="gallery-col">
-        <h2>Photos</h2>
+<section class="project-layout">
+    <div class="project-gallery-col">
         <div class="gallery-viewport" data-index="0" data-total="{{ portfolio.images | length }}">
             {% if portfolio.images %}
             {% for image in portfolio.images %}
@@ -23,15 +22,14 @@
             <div class="gallery-empty">No photos</div>
             {% endif %}
         </div>
+        {% if portfolio.images and portfolio.images|length > 1 %}
         <div class="gallery-counter">
-            {% if portfolio.images %}
             <span class="counter-current">1</span> / <span class="counter-total">{{ portfolio.images | length }}</span>
-            {% endif %}
         </div>
+        {% endif %}
     </div>
 
-    <div class="gallery-col">
-        <h2>Technical</h2>
+    <div class="project-gallery-col">
         <div class="gallery-viewport" data-index="0" data-total="{{ portfolio.technical_images | length }}">
             {% if portfolio.technical_images %}
             {% for image in portfolio.technical_images %}
@@ -41,11 +39,11 @@
             <div class="gallery-empty">No technical drawings</div>
             {% endif %}
         </div>
+        {% if portfolio.technical_images and portfolio.technical_images|length > 1 %}
         <div class="gallery-counter">
-            {% if portfolio.technical_images %}
             <span class="counter-current">1</span> / <span class="counter-total">{{ portfolio.technical_images | length }}</span>
-            {% endif %}
         </div>
+        {% endif %}
     </div>
 </section>
 
@@ -60,11 +58,9 @@
 <script>
 document.querySelectorAll('.gallery-viewport').forEach(function(vp) {
     var imgs = vp.querySelectorAll('.gallery-img');
-    var col = vp.closest('.gallery-col');
+    var col = vp.closest('.project-gallery-col');
     var counter = col ? col.querySelector('.counter-current') : null;
     var idx = 0;
-
-    if (imgs.length < 2) return;
 
     vp.addEventListener('click', function() {
         imgs[idx].classList.remove('active');

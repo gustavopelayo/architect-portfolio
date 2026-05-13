@@ -517,8 +517,7 @@ footer {
     .projects-grid,
     .page-header,
     .project-header,
-    .project-gallery,
-    .technical-section,
+    .project-layout,
     .project-description,
     .about-header,
     .about-content,
@@ -580,8 +579,8 @@ footer {
     margin-bottom: 0.5rem;
 }
 
-/* Dual Gallery */
-.dual-gallery {
+/* Project Layout */
+.project-layout {
     max-width: 1280px;
     margin: 0 auto;
     padding: 0 1.5rem;
@@ -589,6 +588,51 @@ footer {
     grid-template-columns: 1fr 1fr;
     gap: 1.5rem;
     padding-top: 1.25rem;
+}
+
+.project-gallery-col {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.gallery-viewport {
+    cursor: pointer;
+    line-height: 0;
+}
+
+.gallery-img {
+    display: none;
+    max-width: 100%;
+    height: auto;
+}
+
+.gallery-img.active {
+    display: inline-block;
+}
+
+.gallery-counter {
+    font-size: 0.8rem;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+}
+
+.gallery-empty {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    color: var(--muted);
+}
+
+@media (max-width: 760px) {
+    .project-layout {
+        grid-template-columns: 1fr;
+    }
 }
 
 .gallery-col h2 {
