@@ -635,35 +635,22 @@ footer {
     top: 5rem;
     left: 1.5rem;
     z-index: 100;
-    background: none;
-    border: none;
-    color: rgba(255,255,255,0.6);
-    padding: 0;
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(6px);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: rgba(255,255,255,0.8);
+    padding: 0.5rem 1.2rem;
     font-size: 0.7rem;
-    letter-spacing: 0.15em;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
     cursor: pointer;
-    transition: color 300ms ease;
-    writing-mode: vertical-rl;
-    text-orientation: mixed;
+    transition: all 300ms ease;
+    font-family: inherit;
 }
 
 .about-btn:hover {
+    background: rgba(255,255,255,0.18);
     color: #fff;
-}
-
-.about-btn::after {
-    content: "";
-    display: block;
-    width: 1px;
-    height: 2rem;
-    background: rgba(255,255,255,0.3);
-    margin: 0.75rem auto 0;
-    transition: background 300ms ease;
-}
-
-.about-btn:hover::after {
-    background: rgba(255,255,255,0.6);
 }
 
 .about-panel {
@@ -678,9 +665,9 @@ footer {
     background: rgba(255,255,255,0.97);
     padding: 6rem 2.5rem 3rem;
     opacity: 0;
-    transform: translateX(-100%);
+    transform: translateX(-1.5rem);
     pointer-events: none;
-    transition: opacity 350ms ease, transform 350ms ease;
+    transition: opacity 300ms ease, transform 300ms ease;
 }
 
 .about-panel.open {
