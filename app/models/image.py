@@ -22,6 +22,7 @@ class TechnicalImage(Base):
     id = Column(Integer, primary_key=True, index=True)
     portfolio_id = Column(Integer, ForeignKey("portfolios.id"))
     image_url = Column(String(255), nullable=False)
+    is_cover = Column(Boolean, default=False)
     caption = Column(String(255))
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     

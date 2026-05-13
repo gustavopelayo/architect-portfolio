@@ -49,7 +49,9 @@
                     {% endif %}
                 </div>
                 <div class="media-card-body">
-                    <span class="caption">{{ image.caption or 'No caption' }}</span>
+                    <form action="/admin/images/{{ image.id }}/caption" method="POST" class="caption-form">
+                        <input type="text" name="caption" value="{{ image.caption or '' }}" placeholder="No caption" class="caption-input">
+                    </form>
                     <a href="/admin/images/{{ image.id }}/delete" class="btn-delete-sm" onclick="return confirm('Delete this image?')">Remove</a>
                 </div>
             </div>
@@ -81,9 +83,18 @@
         <div class="current-media">
             {% for image in project.technical_images %}
             <div class="media-card">
-                <img src="{{ image.image_url }}" alt="{{ project.name }} - Technical">
+                <div class="media-card-img-wrap">
+                    <img src="{{ image.image_url }}" alt="{{ project.name }} - Technical">
+                    {% if image.is_cover %}
+                    <span class="cover-badge">Cover</span>
+                    {% else %}
+                    <a href="/admin/projects/{{ project.id }}/images/{{ image.id }}/set-cover" class="cover-set">Cover</a>
+                    {% endif %}
+                </div>
                 <div class="media-card-body">
-                    <span class="caption">{{ image.caption or 'No caption' }}</span>
+                    <form action="/admin/images/{{ image.id }}/caption" method="POST" class="caption-form">
+                        <input type="text" name="caption" value="{{ image.caption or '' }}" placeholder="No caption" class="caption-input">
+                    </form>
                     <a href="/admin/images/{{ image.id }}/delete" class="btn-delete-sm" onclick="return confirm('Delete this technical drawing?')">Remove</a>
                 </div>
             </div>
@@ -107,4 +118,12 @@
     </section>
     {% endif %}
 </section>
+<script>
+document.querySelectorAll('.caption-input').forEach(function(inp) {
+    inp.addEventListener('blur', function() { this.form.submit(); });
+    inp.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') { e.preventDefault(); this.form.submit(); }
+    });
+});
+</script>
 {% endblock %}

@@ -456,13 +456,27 @@ async def delete_image(image_id: int, db: Session = Depends(get_db)):
 
 @app.get("/admin/projects/{portfolio_id}/images/{image_id}/set-cover")
 async def set_cover_image(portfolio_id: int, image_id: int, db: Session = Depends(get_db)):
-    from app.models.image import PortfolioImage
+    from app.models.image import PortfolioImage, TechnicalImage
     db.query(PortfolioImage).filter(PortfolioImage.portfolio_id == portfolio_id).update({"is_cover": False})
-    img = db.query(PortfolioImage).filter(PortfolioImage.id == image_id, PortfolioImage.portfolio_id == portfolio_id).first()
-    if img:
-        img.is_cover = True
-        db.commit()
+    db.query(TechnicalImage).filter(TechnicalImage.portfolio_id == portfolio_id).update({"is_cover": False})
+    for model in (PortfolioImage, TechnicalImage):
+        img = db.query(model).filter(model.id == image_id, model.portfolio_id == portfolio_id).first()
+        if img:
+            img.is_cover = True
+            break
+    db.commit()
     return RedirectResponse(url=f"/admin/projects/{portfolio_id}/edit", status_code=302)
+
+@app.post("/admin/images/{image_id}/caption")
+async def update_caption(image_id: int, caption: str = Form(""), db: Session = Depends(get_db)):
+    from app.models.image import PortfolioImage, TechnicalImage
+    for model in (PortfolioImage, TechnicalImage):
+        img = db.query(model).filter(model.id == image_id).first()
+        if img:
+            img.caption = caption
+            db.commit()
+            return RedirectResponse(url=f"/admin/projects/{img.portfolio_id}/edit", status_code=302)
+    return RedirectResponse(url="/admin/dashboard", status_code=302)
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
