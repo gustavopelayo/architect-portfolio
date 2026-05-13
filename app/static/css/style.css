@@ -313,6 +313,13 @@ main {
     font-weight: 400;
 }
 
+.project-desc {
+    font-size: 0.82rem;
+    line-height: 1.45;
+    color: var(--muted);
+    margin-top: 0.4rem;
+}
+
 .project-meta {
     margin-top: 1rem;
     display: flex;

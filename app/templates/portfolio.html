@@ -32,6 +32,9 @@
                     {% if portfolio.location %}{{ portfolio.location }}{% else %}Location{% endif %}
                     {% if portfolio.year %} / {{ portfolio.year }}{% endif %}
                 </span>
+                {% if portfolio.description %}
+                <p class="project-desc">{{ portfolio.description[:120] }}{% if portfolio.description|length > 120 %}...{% endif %}</p>
+                {% endif %}
             </div>
         </a>
     </article>
