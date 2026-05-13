@@ -114,6 +114,10 @@ main {
     max-width: 1600px;
     margin: 0 auto;
     padding: 0;
+    height: min(85vh, 900px);
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
 }
 
 .hero-image {

@@ -68,20 +68,16 @@ document.querySelectorAll('.project-thumb-wrap').forEach(function(wrap) {
     var slides = document.querySelectorAll('.hero-slide');
     var sidx = 0;
 
+    function advance() {
+        slides[sidx].classList.remove('active');
+        sidx = (sidx + 1) % slides.length;
+        slides[sidx].classList.add('active');
+    }
+
     if (slides.length > 1) {
-        var heroEl = document.querySelector('.hero');
-        if (heroEl) {
-            heroEl.addEventListener('click', function() {
-                slides[sidx].classList.remove('active');
-                sidx = (sidx + 1) % slides.length;
-                slides[sidx].classList.add('active');
-            });
-        }
-        setInterval(function() {
-            slides[sidx].classList.remove('active');
-            sidx = (sidx + 1) % slides.length;
-            slides[sidx].classList.add('active');
-        }, 6000);
+        document.querySelector('.hero').addEventListener('click', advance);
+        slides.forEach(function(s) { s.addEventListener('click', advance); });
+        setInterval(advance, 6000);
     }
 })();
 </script>
