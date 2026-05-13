@@ -48,6 +48,14 @@
 </section>
 
 <script>
+$(function() {
+    $('.hero').ripples({
+        resolution: 256,
+        perturbance: 0.02,
+        dropRadius: 10
+    });
+});
+
 var projectImages = {{ project_images_map | default({}) | tojson }};
 
 document.querySelectorAll('.project-thumb-wrap').forEach(function(wrap) {
