@@ -10,7 +10,7 @@
         <img src="{{ image.image_url }}" alt="{{ portfolio.name }}" class="split-img{% if loop.first %} active{% endif %}">
         {% endfor %}
         {% if portfolio.images|length > 1 %}
-        <span class="split-counter">{{ portfolio.images | length }}</span>
+        <span class="split-counter"><span class="counter-cur">1</span>&thinsp;/&thinsp;<span class="counter-total">{{ portfolio.images | length }}</span></span>
         {% endif %}
         {% else %}
         <div class="split-empty"></div>
@@ -28,7 +28,7 @@
         <img src="{{ image.image_url }}" alt="{{ portfolio.name }} - Technical" class="split-img{% if loop.first %} active{% endif %}">
         {% endfor %}
         {% if portfolio.technical_images|length > 1 %}
-        <span class="split-counter">{{ portfolio.technical_images | length }}</span>
+        <span class="split-counter"><span class="counter-cur">1</span>&thinsp;/&thinsp;<span class="counter-total">{{ portfolio.technical_images | length }}</span></span>
         {% endif %}
         {% else %}
         <div class="split-empty"></div>
@@ -80,45 +80,45 @@
         var imgs = side.querySelectorAll('.split-img');
         var thumbs = side.querySelectorAll('.thumb-img');
         var counter = side.querySelector('.split-counter');
+        var curSpan = side.querySelector('.counter-cur');
         var idx = 0;
-        var stripOpen = false;
 
-        function showImage(i) {
+        function show(i) {
             imgs[idx].classList.remove('active');
             thumbs[idx].classList.remove('active');
             idx = i;
             imgs[idx].classList.add('active');
             thumbs[idx].classList.add('active');
+            if (curSpan) curSpan.textContent = idx + 1;
         }
 
         if (counter) {
             counter.addEventListener('click', function(e) {
                 e.stopPropagation();
-                stripOpen = !stripOpen;
-                side.classList.toggle('strip-open', stripOpen);
+                side.classList.toggle('strip-open');
             });
         }
+
+        imgs.forEach(function(img, i) {
+            img.addEventListener('click', function(e) {
+                e.stopPropagation();
+                if (side.classList.contains('strip-open')) return;
+                show((idx + 1) % imgs.length);
+            });
+        });
 
         thumbs.forEach(function(t, i) {
             t.addEventListener('click', function(e) {
                 e.stopPropagation();
-                showImage(i);
-                stripOpen = false;
+                show(i);
+                fsImg.src = imgs[i].src;
+                fullscreen.classList.add('open');
                 side.classList.remove('strip-open');
             });
         });
 
-        side.querySelectorAll('.split-img:not(.thumb-img)').forEach(function(img) {
-            img.addEventListener('click', function(e) {
-                if (stripOpen) return;
-                fsImg.src = imgs[idx].src;
-                fullscreen.classList.add('open');
-            });
-        });
-
         document.addEventListener('click', function(e) {
-            if (stripOpen && !side.contains(e.target)) {
-                stripOpen = false;
+            if (!side.contains(e.target)) {
                 side.classList.remove('strip-open');
             }
         });
@@ -129,15 +129,13 @@
     });
 
     fullscreen.addEventListener('click', function(e) {
-        if (e.target === fullscreen) {
+        if (e.target === fullscreen || e.target === fsImg) {
             fullscreen.classList.remove('open');
         }
     });
 
     document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') {
-            fullscreen.classList.remove('open');
-        }
+        if (e.key === 'Escape') fullscreen.classList.remove('open');
     });
 
     var title = document.getElementById('titleToggle');
@@ -147,12 +145,8 @@
             e.stopPropagation();
             panel.classList.toggle('open');
         });
-        document.addEventListener('click', function() {
-            panel.classList.remove('open');
-        });
-        panel.addEventListener('click', function(e) {
-            e.stopPropagation();
-        });
+        document.addEventListener('click', function() { panel.classList.remove('open'); });
+        panel.addEventListener('click', function(e) { e.stopPropagation(); });
     }
 })();
 </script>
