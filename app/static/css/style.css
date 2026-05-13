@@ -630,6 +630,66 @@ footer {
     pointer-events: none;
 }
 
+.about-btn {
+    position: fixed;
+    top: 5rem;
+    left: 1.5rem;
+    z-index: 100;
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.25);
+    color: #fff;
+    padding: 0.5rem 1.1rem;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 200ms ease;
+}
+
+.about-btn:hover {
+    background: rgba(255,255,255,0.25);
+}
+
+.about-panel {
+    position: fixed;
+    top: 5rem;
+    left: 1.5rem;
+    z-index: 99;
+    width: 380px;
+    max-width: calc(100vw - 3rem);
+    max-height: calc(100vh - 10rem);
+    overflow-y: auto;
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(12px);
+    padding: 1.5rem;
+    opacity: 0;
+    transform: translateY(-8px);
+    pointer-events: none;
+    transition: opacity 250ms ease, transform 250ms ease;
+}
+
+.about-panel.open {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+.about-panel p {
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: #1f1f1e;
+    margin-bottom: 1rem;
+}
+
+.about-panel .about-meta {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #6f6a64;
+    margin-bottom: 0;
+}
+
 .split-overlay {
     position: fixed;
     bottom: 2.5rem;

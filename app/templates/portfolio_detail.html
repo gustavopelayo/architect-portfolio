@@ -30,6 +30,21 @@
         {% endif %}
     </div>
 
+    <button class="about-btn" id="aboutToggle">About</button>
+
+    {% if portfolio.description %}
+    <div class="about-panel" id="aboutPanel">
+        <p>{{ portfolio.description }}</p>
+        {% if portfolio.year or portfolio.location %}
+        <p class="about-meta">
+            {% if portfolio.year %}{{ portfolio.year }}{% endif %}
+            {% if portfolio.year and portfolio.location %} / {% endif %}
+            {% if portfolio.location %}{{ portfolio.location }}{% endif %}
+        </p>
+        {% endif %}
+    </div>
+    {% endif %}
+
     <div class="split-overlay">
         <h1>{{ portfolio.name }}</h1>
         {% if portfolio.year or portfolio.location %}
@@ -42,6 +57,35 @@
     </div>
 </div>
 <script>
+(function() {
+    var sides = document.querySelectorAll('.split-half');
+    sides.forEach(function(side) {
+        var imgs = side.querySelectorAll('.split-img');
+        var idx = 0;
+        if (imgs.length < 2) return;
+        side.addEventListener('click', function() {
+            imgs[idx].classList.remove('active');
+            idx = (idx + 1) % imgs.length;
+            imgs[idx].classList.add('active');
+        });
+    });
+
+    var btn = document.getElementById('aboutToggle');
+    var panel = document.getElementById('aboutPanel');
+    if (btn && panel) {
+        btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            panel.classList.toggle('open');
+        });
+        document.addEventListener('click', function() {
+            panel.classList.remove('open');
+        });
+        panel.addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
+    }
+})();
+</script>
 (function() {
     var sides = document.querySelectorAll('.split-half');
     sides.forEach(function(side) {
