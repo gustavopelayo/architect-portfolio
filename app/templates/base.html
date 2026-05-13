@@ -36,35 +36,36 @@
 <style>
 .cursor-dot {
     position: fixed;
-    width: 8px;
-    height: 8px;
+    width: 12px;
+    height: 12px;
     background: var(--accent);
     border-radius: 50%;
     pointer-events: none;
     z-index: 9999;
     transform: translate(-50%, -50%);
     transition: width 0.2s, height 0.2s, background 0.2s;
-    mix-blend-mode: multiply;
     opacity: 0;
 }
 
 .cursor-ring {
     position: fixed;
-    width: 30px;
-    height: 30px;
-    border: 1px solid var(--accent);
+    width: 40px;
+    height: 40px;
+    border: 1.5px solid var(--accent);
     border-radius: 50%;
     pointer-events: none;
     z-index: 9998;
     transform: translate(-50%, -50%);
     transition: width 0.3s, height 0.3s, border-color 0.3s, opacity 0.3s;
     opacity: 0;
-    mix-blend-mode: multiply;
 }
 
-.cursor-dot.visible, .cursor-ring.visible { opacity: 1; }
-.cursor-dot.click { width: 4px; height: 4px; }
-.cursor-ring.click { width: 20px; height: 20px; border-color: var(--text); }
+body { cursor: none; }
+a, button { cursor: none; }
+input, textarea { cursor: auto; }
+.cursor-dot.visible, .cursor-ring.visible { opacity: 0.95; }
+.cursor-dot.click { width: 6px; height: 6px; background: var(--text); }
+.cursor-ring.click { width: 28px; height: 28px; border-color: var(--text); border-width: 2px; }
 
 @media (pointer: coarse) {
     .cursor-dot, .cursor-ring { display: none; }
