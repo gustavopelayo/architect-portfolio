@@ -51,6 +51,7 @@
                 <div class="media-card-body">
                     <form action="/admin/images/{{ image.id }}/caption" method="POST" class="caption-form">
                         <input type="text" name="caption" value="{{ image.caption or '' }}" placeholder="No caption" class="caption-input">
+                        <button type="submit" class="caption-save" title="Save">&#10003;</button>
                     </form>
                     <a href="/admin/images/{{ image.id }}/delete" class="btn-delete-sm" onclick="return confirm('Delete this image?')">Remove</a>
                 </div>
@@ -94,6 +95,7 @@
                 <div class="media-card-body">
                     <form action="/admin/images/{{ image.id }}/caption" method="POST" class="caption-form">
                         <input type="text" name="caption" value="{{ image.caption or '' }}" placeholder="No caption" class="caption-input">
+                        <button type="submit" class="caption-save" title="Save">&#10003;</button>
                     </form>
                     <a href="/admin/images/{{ image.id }}/delete" class="btn-delete-sm" onclick="return confirm('Delete this technical drawing?')">Remove</a>
                 </div>

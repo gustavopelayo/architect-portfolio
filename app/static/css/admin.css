@@ -257,6 +257,9 @@
     flex: 1;
     min-width: 0;
     margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
 }
 
 .caption-input {
@@ -279,6 +282,20 @@
 
 .caption-input::placeholder {
     color: var(--line);
+}
+
+.caption-save {
+    background: none;
+    border: none;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 0.75rem;
+    padding: 0.15rem 0.3rem;
+    transition: color 150ms ease;
+}
+
+.caption-save:hover {
+    color: var(--text);
 }
 
 .media-card-body .caption {
