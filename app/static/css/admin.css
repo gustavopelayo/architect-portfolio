@@ -285,17 +285,19 @@
 }
 
 .caption-save {
-    background: none;
+    background: var(--accent);
     border: none;
-    color: var(--muted);
+    color: var(--text);
     cursor: pointer;
-    font-size: 0.75rem;
-    padding: 0.15rem 0.3rem;
-    transition: color 150ms ease;
+    font-size: 0.65rem;
+    padding: 0.2rem 0.4rem;
+    border-radius: 2px;
+    transition: background 150ms ease;
+    line-height: 1;
 }
 
 .caption-save:hover {
-    color: var(--text);
+    background: #a69d8f;
 }
 
 .media-card-body .caption {

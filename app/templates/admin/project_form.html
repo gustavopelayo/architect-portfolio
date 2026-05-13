@@ -49,9 +49,9 @@
                     {% endif %}
                 </div>
                 <div class="media-card-body">
-                    <form action="/admin/images/{{ image.id }}/caption" method="POST" class="caption-form">
-                        <input type="text" name="caption" value="{{ image.caption or '' }}" placeholder="No caption" class="caption-input">
-                        <button type="submit" class="caption-save" title="Save">&#10003;</button>
+                    <form class="caption-form">
+                        <input type="text" name="caption" value="{{ image.caption or '' }}" placeholder="No caption" class="caption-input" data-id="{{ image.id }}">
+                        <button type="button" class="caption-save" title="Save">&#10003;</button>
                     </form>
                     <a href="/admin/images/{{ image.id }}/delete" class="btn-delete-sm" onclick="return confirm('Delete this image?')">Remove</a>
                 </div>
@@ -93,9 +93,9 @@
                     {% endif %}
                 </div>
                 <div class="media-card-body">
-                    <form action="/admin/images/{{ image.id }}/caption" method="POST" class="caption-form">
-                        <input type="text" name="caption" value="{{ image.caption or '' }}" placeholder="No caption" class="caption-input">
-                        <button type="submit" class="caption-save" title="Save">&#10003;</button>
+                    <form class="caption-form">
+                        <input type="text" name="caption" value="{{ image.caption or '' }}" placeholder="No caption" class="caption-input" data-id="{{ image.id }}">
+                        <button type="button" class="caption-save" title="Save">&#10003;</button>
                     </form>
                     <a href="/admin/images/{{ image.id }}/delete" class="btn-delete-sm" onclick="return confirm('Delete this technical drawing?')">Remove</a>
                 </div>
@@ -121,10 +121,25 @@
     {% endif %}
 </section>
 <script>
-document.querySelectorAll('.caption-input').forEach(function(inp) {
-    inp.addEventListener('blur', function() { this.form.submit(); });
+document.querySelectorAll('.caption-form').forEach(function(form) {
+    var inp = form.querySelector('.caption-input');
+    var btn = form.querySelector('.caption-save');
+    function save() {
+        var val = inp.value;
+        var id = inp.dataset.id;
+        btn.textContent = '...';
+        fetch('/admin/images/' + id + '/caption', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            body: 'caption=' + encodeURIComponent(val)
+        }).then(function() {
+            btn.textContent = '\u2713';
+            setTimeout(function() { btn.textContent = '\u2713'; }, 1500);
+        });
+    }
+    btn.addEventListener('click', save);
     inp.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter') { e.preventDefault(); this.form.submit(); }
+        if (e.key === 'Enter') { e.preventDefault(); save(); }
     });
 });
 </script>
