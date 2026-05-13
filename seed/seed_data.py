@@ -13,7 +13,8 @@ from app.crud import portfolio as crud_portfolio
 from app.crud import image as crud_image
 from app.models.setting import SiteSetting, HeroImage
 
-SEED_IMAGES = Path(__file__).parent / "images"
+SEED_PHOTOS = Path(__file__).parent / "images" / "photos"
+SEED_TECHNICAL = Path(__file__).parent / "images" / "technical"
 UPLOADS = Path("app/static/uploads")
 
 PROJECTS = [
@@ -52,7 +53,7 @@ def seed():
         dest.mkdir(parents=True, exist_ok=True)
 
         for fname in p["images"]:
-            src = SEED_IMAGES / fname
+            src = SEED_PHOTOS / fname
             if not src.exists():
                 print(f"  WARNING: {src} not found, skipping")
                 continue
@@ -66,7 +67,7 @@ def seed():
             first_img.is_cover = True
 
         for fname in p["technical"]:
-            src = SEED_IMAGES / fname
+            src = SEED_TECHNICAL / fname
             if not src.exists():
                 continue
             tech_dest = dest / "technical"
@@ -98,7 +99,7 @@ def seed():
 
     hero_count = db.query(HeroImage).count()
     if hero_count == 0:
-        src = SEED_IMAGES / "09210756-c724-450f-a139-cd5823c875bb.jpg"
+        src = SEED_PHOTOS / "09210756-c724-450f-a139-cd5823c875bb.jpg"
         if src.exists():
             hero_dir = UPLOADS / "hero"
             hero_dir.mkdir(parents=True, exist_ok=True)
