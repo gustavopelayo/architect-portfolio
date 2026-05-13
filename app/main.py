@@ -38,9 +38,20 @@ app.include_router(auth.router, prefix="/api/v1/auth", tags=["auth"])
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request, db: Session = Depends(get_db)):
     from app.crud import portfolio as crud_portfolio
+    from app.models.image import PortfolioImage
     site_settings = get_site_settings()
     featured = crud_portfolio.get_featured_portfolios(db)
-    return templates.TemplateResponse(request=request, name="index.html", context={"request": request, "featured_portfolios": featured, "settings": site_settings})
+    project_images_map = {}
+    for p in featured:
+        urls = [img.image_url for img in db.query(PortfolioImage).filter(PortfolioImage.portfolio_id == p.id).order_by(PortfolioImage.id).all()]
+        if urls:
+            project_images_map[str(p.id)] = urls
+    return templates.TemplateResponse(request=request, name="index.html", context={
+        "request": request,
+        "featured_portfolios": featured,
+        "settings": site_settings,
+        "project_images_map": project_images_map,
+    })
 
 @app.get("/portfolio", response_class=HTMLResponse)
 async def portfolio_page(request: Request, db: Session = Depends(get_db)):

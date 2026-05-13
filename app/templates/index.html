@@ -24,13 +24,13 @@
 <section class="projects-list">
     {% for portfolio in featured_portfolios %}
     <article class="project-item">
-        <a href="/portfolio/{{ portfolio.id }}">
+        <div class="project-thumb-wrap" style="cursor:pointer;">
             {% if portfolio.images %}
-            <img src="{{ portfolio.images[0].image_url }}" alt="{{ portfolio.name }}" class="project-thumbnail">
+            <img src="{{ portfolio.images[0].image_url }}" alt="{{ portfolio.name }}" class="project-thumbnail" data-project="{{ portfolio.id }}" data-index="0">
             {% else %}
             <div class="project-thumbnail" style="background: #f5f5f5;"></div>
             {% endif %}
-        </a>
+        </div>
         <a href="/portfolio/{{ portfolio.id }}">{{ portfolio.name }}</a>
         <span class="project-year">{% if portfolio.year %}{{ portfolio.year }}{% else %}Project{% endif %}</span>
     </article>
@@ -54,6 +54,22 @@
 </section>
 
 <script>
+var projectImages = {{ project_images_map | default({}) | tojson }};
+
+document.querySelectorAll('.project-thumb-wrap').forEach(function(wrap) {
+    var img = wrap.querySelector('img');
+    if (!img) return;
+    var pid = img.dataset.project;
+    var images = projectImages[pid];
+    if (!images || images.length < 2) return;
+    var idx = 0;
+    img.addEventListener('click', function(e) {
+        e.preventDefault();
+        idx = (idx + 1) % images.length;
+        img.src = images[idx];
+    });
+});
+
 (function() {
     var taglines = {{ tagline_json | safe }};
     var idx = 0;
