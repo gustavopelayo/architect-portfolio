@@ -66,8 +66,17 @@ document.querySelectorAll('.project-thumb-wrap').forEach(function(wrap) {
 
 (function() {
     var slides = document.querySelectorAll('.hero-slide');
+    var sidx = 0;
+
     if (slides.length > 1) {
-        var sidx = 0;
+        var heroEl = document.querySelector('.hero');
+        if (heroEl) {
+            heroEl.addEventListener('click', function() {
+                slides[sidx].classList.remove('active');
+                sidx = (sidx + 1) % slides.length;
+                slides[sidx].classList.add('active');
+            });
+        }
         setInterval(function() {
             slides[sidx].classList.remove('active');
             sidx = (sidx + 1) % slides.length;
