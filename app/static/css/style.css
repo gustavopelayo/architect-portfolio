@@ -630,28 +630,7 @@ footer {
     pointer-events: none;
 }
 
-.about-btn {
-    position: fixed;
-    top: 5rem;
-    right: 1.5rem;
-    z-index: 100;
-    background: rgba(255,255,255,0.08);
-    backdrop-filter: blur(6px);
-    border: 1px solid rgba(255,255,255,0.15);
-    color: rgba(255,255,255,0.8);
-    padding: 0.5rem 1.2rem;
-    font-size: 0.7rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: all 300ms ease;
-    font-family: inherit;
-}
 
-.about-btn:hover {
-    background: rgba(255,255,255,0.18);
-    color: #fff;
-}
 
 .about-panel {
     position: fixed;
@@ -705,6 +684,12 @@ footer {
     z-index: 100;
     color: #fff;
     text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+    cursor: pointer;
+    transition: opacity 200ms ease;
+}
+
+.split-overlay:hover {
+    opacity: 0.7;
 }
 
 .split-overlay h1 {
