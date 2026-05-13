@@ -5,7 +5,6 @@
 {% block content %}
 <section class="hero">
     {% if settings.hero_images %}
-    <div class="hero-ripple" id="heroRipple" style="background-image:url('{{ settings.hero_images[0].image_url }}')"></div>
     <div class="hero-slideshow">
         {% for img in settings.hero_images %}
         <img src="{{ img.image_url }}" alt="{{ img.caption or '' }}" class="hero-image hero-slide{% if loop.first %} active{% endif %}">
@@ -67,23 +66,13 @@ document.querySelectorAll('.project-thumb-wrap').forEach(function(wrap) {
 
 (function() {
     var slides = document.querySelectorAll('.hero-slide');
-    var rippleEl = document.getElementById('heroRipple');
     if (slides.length > 1) {
         var sidx = 0;
         setInterval(function() {
             slides[sidx].classList.remove('active');
             sidx = (sidx + 1) % slides.length;
             slides[sidx].classList.add('active');
-            if (rippleEl) rippleEl.style.backgroundImage = 'url(' + slides[sidx].src + ')';
         }, 6000);
-    }
-
-    if (rippleEl) {
-        $(rippleEl).ripples({
-            resolution: 256,
-            perturbance: 0.02,
-            dropRadius: 10
-        });
     }
 })();
 </script>
