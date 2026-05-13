@@ -517,7 +517,6 @@ footer {
     .projects-grid,
     .page-header,
     .project-header,
-    .project-layout,
     .project-description,
     .about-header,
     .about-content,
@@ -579,59 +578,89 @@ footer {
     margin-bottom: 0.5rem;
 }
 
-/* Project Layout */
-.project-layout {
-    max-width: 1280px;
-    margin: 0 auto;
-    padding: 0 1.5rem;
+/* Split View */
+.split-view {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 1.5rem;
-    padding-top: 1.25rem;
+    z-index: 50;
 }
 
-.project-gallery-col {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-}
-
-.gallery-viewport {
+.split-half {
+    position: relative;
+    overflow: hidden;
     cursor: pointer;
-    line-height: 0;
 }
 
-.gallery-img {
-    display: none;
-    max-width: 100%;
-    height: auto;
-}
-
-.gallery-img.active {
-    display: inline-block;
-}
-
-.gallery-counter {
-    font-size: 0.8rem;
-    color: var(--muted);
-    letter-spacing: 0.05em;
-}
-
-.gallery-empty {
+.split-img {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
-    aspect-ratio: 4 / 3;
-    background: var(--surface);
-    border: 1px solid var(--line);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.85rem;
-    color: var(--muted);
+    height: 100%;
+    object-fit: cover;
+    display: none;
+}
+
+.split-img.active {
+    display: block;
+}
+
+.split-empty {
+    width: 100%;
+    height: 100%;
+    background: var(--bg);
+}
+
+.split-counter {
+    position: absolute;
+    bottom: 1.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.75rem;
+    color: #fff;
+    letter-spacing: 0.05em;
+    background: rgba(0,0,0,0.4);
+    padding: 0.25rem 0.6rem;
+}
+
+.split-overlay {
+    position: fixed;
+    bottom: 2.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    z-index: 10;
+    color: #fff;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+}
+
+.split-overlay h1 {
+    font-family: "Playfair Display", serif;
+    font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+    font-weight: 400;
+    margin-bottom: 0.25rem;
+}
+
+.split-overlay p {
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    opacity: 0.7;
 }
 
 @media (max-width: 760px) {
-    .project-layout {
+    .split-view {
         grid-template-columns: 1fr;
+        grid-template-rows: 1fr 1fr;
+    }
+
+    .split-overlay {
+        bottom: 1.5rem;
     }
 }
 
