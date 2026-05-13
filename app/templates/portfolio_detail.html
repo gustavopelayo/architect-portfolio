@@ -4,7 +4,7 @@
 
 {% block content %}
 <div class="split-view">
-    <div class="split-half split-left">
+    <div class="split-half split-left" data-side="photos">
         {% if portfolio.images %}
         {% for image in portfolio.images %}
         <img src="{{ image.image_url }}" alt="{{ portfolio.name }}" class="split-img{% if loop.first %} active{% endif %}">
@@ -15,9 +15,14 @@
         {% else %}
         <div class="split-empty"></div>
         {% endif %}
+        <div class="thumb-strip">
+            {% for image in portfolio.images %}
+            <img src="{{ image.image_url }}" alt="" class="thumb-img{% if loop.first %} active{% endif %}">
+            {% endfor %}
+        </div>
     </div>
 
-    <div class="split-half split-right">
+    <div class="split-half split-right" data-side="technical">
         {% if portfolio.technical_images %}
         {% for image in portfolio.technical_images %}
         <img src="{{ image.image_url }}" alt="{{ portfolio.name }} - Technical" class="split-img{% if loop.first %} active{% endif %}">
@@ -28,6 +33,11 @@
         {% else %}
         <div class="split-empty"></div>
         {% endif %}
+        <div class="thumb-strip">
+            {% for image in portfolio.technical_images %}
+            <img src="{{ image.image_url }}" alt="" class="thumb-img{% if loop.first %} active{% endif %}">
+            {% endfor %}
+        </div>
     </div>
 
     {% if portfolio.description %}
@@ -54,18 +64,80 @@
         {% endif %}
     </div>
 </div>
+
+<div class="fullscreen-view" id="fullscreenView">
+    <span class="fullscreen-close">&times;</span>
+    <img src="" alt="" class="fullscreen-img">
+</div>
+
 <script>
 (function() {
-    var sides = document.querySelectorAll('.split-half');
-    sides.forEach(function(side) {
+    var fullscreen = document.getElementById('fullscreenView');
+    var fsImg = fullscreen.querySelector('.fullscreen-img');
+    var fsClose = fullscreen.querySelector('.fullscreen-close');
+
+    document.querySelectorAll('.split-half').forEach(function(side) {
         var imgs = side.querySelectorAll('.split-img');
+        var thumbs = side.querySelectorAll('.thumb-img');
+        var counter = side.querySelector('.split-counter');
         var idx = 0;
-        if (imgs.length < 2) return;
-        side.addEventListener('click', function() {
+        var stripOpen = false;
+
+        function showImage(i) {
             imgs[idx].classList.remove('active');
-            idx = (idx + 1) % imgs.length;
+            thumbs[idx].classList.remove('active');
+            idx = i;
             imgs[idx].classList.add('active');
+            thumbs[idx].classList.add('active');
+        }
+
+        if (counter) {
+            counter.addEventListener('click', function(e) {
+                e.stopPropagation();
+                stripOpen = !stripOpen;
+                side.classList.toggle('strip-open', stripOpen);
+            });
+        }
+
+        thumbs.forEach(function(t, i) {
+            t.addEventListener('click', function(e) {
+                e.stopPropagation();
+                showImage(i);
+                stripOpen = false;
+                side.classList.remove('strip-open');
+            });
         });
+
+        side.querySelectorAll('.split-img:not(.thumb-img)').forEach(function(img) {
+            img.addEventListener('click', function(e) {
+                if (stripOpen) return;
+                fsImg.src = imgs[idx].src;
+                fullscreen.classList.add('open');
+            });
+        });
+
+        document.addEventListener('click', function(e) {
+            if (stripOpen && !side.contains(e.target)) {
+                stripOpen = false;
+                side.classList.remove('strip-open');
+            }
+        });
+    });
+
+    fsClose.addEventListener('click', function() {
+        fullscreen.classList.remove('open');
+    });
+
+    fullscreen.addEventListener('click', function(e) {
+        if (e.target === fullscreen) {
+            fullscreen.classList.remove('open');
+        }
+    });
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            fullscreen.classList.remove('open');
+        }
     });
 
     var title = document.getElementById('titleToggle');
