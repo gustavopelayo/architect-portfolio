@@ -393,12 +393,28 @@ async def upload_portfolio_image(
     upload_dir = Path("app/static/uploads") / str(portfolio_id)
     upload_dir.mkdir(parents=True, exist_ok=True)
     
-    file_extension = Path(file.filename).suffix or ".jpg"
-    filename = f"{portfolio_id}_{uuid.uuid4().hex[:12]}{file_extension}"
-    file_path = upload_dir / filename
+    suffix = Path(file.filename).suffix.lower()
+    uid = uuid.uuid4().hex[:12]
     
-    with open(file_path, "wb") as buffer:
-        shutil.copyfileobj(file.file, buffer)
+    if suffix == ".pdf":
+        import fitz
+        temp = upload_dir / f"temp_{uid}.pdf"
+        with open(temp, "wb") as f:
+            shutil.copyfileobj(file.file, f)
+        doc = fitz.open(temp)
+        page = doc[0]
+        pix = page.get_pixmap(matrix=fitz.Matrix(2, 2))
+        filename = f"{portfolio_id}_{uid}.png"
+        pix.save(str(upload_dir / filename))
+        doc.close()
+        temp.unlink()
+    elif suffix in (".jpg", ".jpeg", ".png", ".gif", ".webp"):
+        filename = f"{portfolio_id}_{uid}{suffix}"
+        file_path = upload_dir / filename
+        with open(file_path, "wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
+    else:
+        return RedirectResponse(url=f"/admin/projects/{portfolio_id}/edit", status_code=302)
     
     from app.crud import image as crud_image
     from app.schemas.image import ImageCreate
