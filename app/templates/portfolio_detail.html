@@ -3,28 +3,72 @@
 {% block title %}{{ portfolio.name }} - {{ settings.get('site_name', 'Daniel Moura') }}{% endblock %}
 
 {% block content %}
-<div class="gallery-page">
-    <header class="gallery-header">
-        <h1>{{ portfolio.name }}</h1>
+<div class="split-view">
+    <div class="split-half split-left" data-side="photos">
+        {% if portfolio.images %}
+        {% for image in portfolio.images %}
+        <div class="split-img-wrap{% if loop.first %} active{% endif %}">
+            <img src="{{ image.image_url }}" alt="{{ portfolio.name }}" class="split-img">
+            {% if image.caption %}<span class="split-caption">{{ image.caption }}</span>{% endif %}
+        </div>
+        {% endfor %}
+        {% if portfolio.images|length > 1 %}
+        <span class="split-counter"><span class="counter-cur">1</span>&thinsp;/&thinsp;<span class="counter-total">{{ portfolio.images | length }}</span></span>
+        {% endif %}
+        {% else %}
+        <div class="split-empty"></div>
+        {% endif %}
+        <div class="thumb-strip">
+            {% for image in portfolio.images %}
+            <img src="{{ image.image_url }}" alt="" class="thumb-img{% if loop.first %} active{% endif %}">
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="split-half split-right" data-side="technical">
+        {% if portfolio.technical_images %}
+        {% for image in portfolio.technical_images %}
+        <div class="split-img-wrap{% if loop.first %} active{% endif %}">
+            <img src="{{ image.image_url }}" alt="{{ portfolio.name }} - Technical" class="split-img">
+            {% if image.caption %}<span class="split-caption">{{ image.caption }}</span>{% endif %}
+        </div>
+        {% endfor %}
+        {% if portfolio.technical_images|length > 1 %}
+        <span class="split-counter"><span class="counter-cur">1</span>&thinsp;/&thinsp;<span class="counter-total">{{ portfolio.technical_images | length }}</span></span>
+        {% endif %}
+        {% else %}
+        <div class="split-empty"></div>
+        {% endif %}
+        <div class="thumb-strip">
+            {% for image in portfolio.technical_images %}
+            <img src="{{ image.image_url }}" alt="" class="thumb-img{% if loop.first %} active{% endif %}">
+            {% endfor %}
+        </div>
+    </div>
+
+    {% if portfolio.description %}
+    <div class="about-panel" id="aboutPanel">
+        <p>{{ portfolio.description }}</p>
         {% if portfolio.year or portfolio.location %}
-        <p class="gallery-meta">
+        <p class="about-meta">
             {% if portfolio.year %}{{ portfolio.year }}{% endif %}
             {% if portfolio.year and portfolio.location %} / {% endif %}
             {% if portfolio.location %}{{ portfolio.location }}{% endif %}
         </p>
         {% endif %}
-        {% if portfolio.description %}
-        <p class="gallery-description">{{ portfolio.description }}</p>
+    </div>
+    {% endif %}
+
+    <div class="split-overlay" id="titleToggle">
+        <h1>{{ portfolio.name }}</h1>
+        {% if portfolio.year or portfolio.location %}
+        <p>
+            {% if portfolio.year %}{{ portfolio.year }}{% endif %}
+            {% if portfolio.year and portfolio.location %} / {% endif %}
+            {% if portfolio.location %}{{ portfolio.location }}{% endif %}
+        </p>
         {% endif %}
-    </header>
-
-    {% for image in portfolio.images %}
-    <img src="{{ image.image_url }}" alt="{{ portfolio.name }}" class="gallery-img" loading="lazy">
-    {% endfor %}
-
-    {% for image in portfolio.technical_images %}
-    <img src="{{ image.image_url }}" alt="{{ portfolio.name }} - Technical" class="gallery-img" loading="lazy">
-    {% endfor %}
+    </div>
 </div>
 
 <div class="fullscreen-view" id="fullscreenView">
@@ -39,10 +83,55 @@
     var fsImg = fullscreen.querySelector('.fullscreen-img');
     var fsClose = fullscreen.querySelector('.fullscreen-close');
 
-    document.querySelectorAll('.gallery-img').forEach(function(img) {
-        img.addEventListener('click', function() {
-            fsImg.src = img.src;
-            fullscreen.classList.add('open');
+    document.querySelectorAll('.split-half').forEach(function(side) {
+        var wraps = side.querySelectorAll('.split-img-wrap');
+        var imgs = side.querySelectorAll('.split-img');
+        var thumbs = side.querySelectorAll('.thumb-img');
+        var counter = side.querySelector('.split-counter');
+        var curSpan = side.querySelector('.counter-cur');
+        var idx = 0;
+
+        function show(i) {
+            wraps[idx].classList.remove('active');
+            thumbs[idx].classList.remove('active');
+            idx = i;
+            wraps[idx].classList.add('active');
+            thumbs[idx].classList.add('active');
+            if (curSpan) curSpan.textContent = idx + 1;
+        }
+
+        if (counter) {
+            counter.addEventListener('click', function(e) {
+                e.stopPropagation();
+                side.classList.toggle('strip-open');
+            });
+        }
+
+        wraps.forEach(function(w, i) {
+            w.addEventListener('click', function(e) {
+                e.stopPropagation();
+                if (side.classList.contains('strip-open')) return;
+                show((idx + 1) % wraps.length);
+            });
+        });
+
+        var captions = side.querySelectorAll('.split-caption');
+
+        thumbs.forEach(function(t, i) {
+            t.addEventListener('click', function(e) {
+                e.stopPropagation();
+                show(i);
+                fsImg.src = imgs[i].src;
+                fullscreen.querySelector('.fullscreen-caption').textContent = captions[i] ? captions[i].textContent : '';
+                fullscreen.classList.add('open');
+                side.classList.remove('strip-open');
+            });
+        });
+
+        document.addEventListener('click', function(e) {
+            if (!side.contains(e.target)) {
+                side.classList.remove('strip-open');
+            }
         });
     });
 
@@ -59,6 +148,17 @@
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') fullscreen.classList.remove('open');
     });
+
+    var title = document.getElementById('titleToggle');
+    var panel = document.getElementById('aboutPanel');
+    if (title && panel) {
+        title.addEventListener('click', function(e) {
+            e.stopPropagation();
+            panel.classList.toggle('open');
+        });
+        document.addEventListener('click', function() { panel.classList.remove('open'); });
+        panel.addEventListener('click', function(e) { e.stopPropagation(); });
+    }
 })();
 </script>
 {% endblock %}
