@@ -48,4 +48,4 @@ logs/
 # Test
 .pytest_cache/
 test-reports/
-htmlcov/
+htmlcov/.worktrees/
