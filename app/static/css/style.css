@@ -113,6 +113,8 @@ main {
 
 .hero {
     width: 100%;
+    max-width: 1600px;
+    margin: 0 auto;
     padding: 0;
     height: min(85vh, 900px);
     position: relative;
@@ -122,11 +124,10 @@ main {
 .hero-image {
     width: 100%;
     height: min(85vh, 900px);
-    object-fit: contain;
+    object-fit: cover;
     display: block;
     filter: grayscale(100%);
     transition: filter 0.3s ease;
-    margin: 0 auto;
 }
 .hero-image:hover {
     filter: grayscale(0%);
@@ -140,14 +141,11 @@ main {
 
 .hero-slide {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    max-width: 100%;
-    max-height: min(85vh, 900px);
-    width: auto;
-    height: auto;
-    object-fit: contain;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: min(85vh, 900px);
+    object-fit: cover;
     display: block;
     filter: grayscale(100%);
     opacity: 0;
