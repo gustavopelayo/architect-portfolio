@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}About - Daniel Moura{% endblock %}
+{% block title %}About - {{ settings.get('site_name', 'Daniel Moura') }}{% endblock %}
 
 {% block content %}
 {% set about_title = settings.get('about_title', 'About\nDaniel Moura').split('\n') %}

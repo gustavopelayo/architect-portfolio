@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Daniel Moura{% endblock %}</title>
+    <title>{% block title %}{{ settings.get('site_name', 'Daniel Moura') }}{% endblock %}</title>
     <link rel="icon" type="image/png" href="{{ settings.get('logo_path', '/static/logo.png') }}">
     <link rel="stylesheet" href="/static/css/style.css?v=6">
     <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -13,7 +13,7 @@
         <nav class="navbar">
             <a href="/" class="logo">
                 <img src="{{ settings.get('logo_path', '/static/logo.png') }}" alt="" class="logo-icon">
-                Daniel Moura
+                {{ settings.get('site_name', 'Daniel Moura') }}
             </a>
             <ul class="nav-links">
                 <li><a href="/about">About</a></li>
@@ -28,7 +28,7 @@
     </main>
 
     <footer>
-        <p>&copy; 2026 Daniel Moura</p>
+        <p>{{ settings.get('copyright', '© 2026 Daniel Moura') }}</p>
     </footer>
 </body>
 </html>

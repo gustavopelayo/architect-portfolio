@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}{{ portfolio.name }} - Daniel Moura{% endblock %}
+{% block title %}{{ portfolio.name }} - {{ settings.get('site_name', 'Daniel Moura') }}{% endblock %}
 
 {% block content %}
 <div class="split-view">

@@ -7,6 +7,23 @@
     <h1>Site Settings</h1>
 
     <section class="settings-section">
+        <h2>Site Name &amp; Copyright</h2>
+        <form action="/admin/settings/site-name" method="POST">
+            <div class="form-group">
+                <label for="site_name">Site Name</label>
+                <input type="text" id="site_name" name="site_name" value="{{ settings_list.get('site_name', 'Daniel Moura') }}" style="width:100%;padding:0.5rem 0.75rem;border:1px solid var(--line);background:var(--bg);font-size:0.875rem;">
+            </div>
+            <div class="form-group" style="margin-top:0.75rem;">
+                <label for="copyright">Copyright Text</label>
+                <input type="text" id="copyright" name="copyright" value="{{ settings_list.get('copyright', '© 2026 Daniel Moura') }}" style="width:100%;padding:0.5rem 0.75rem;border:1px solid var(--line);background:var(--bg);font-size:0.875rem;">
+            </div>
+            <button type="submit">Save</button>
+        </form>
+    </section>
+
+    <hr class="section-divider">
+
+    <section class="settings-section">
         <h2>Taglines</h2>
         <p class="settings-hint">One per line. They'll cycle on the front page.</p>
         <form action="/admin/settings/taglines" method="POST">

@@ -230,6 +230,23 @@ async def admin_settings(request: Request, db: Session = Depends(get_db)):
         }
     )
 
+@app.post("/admin/settings/site-name")
+async def update_site_name(
+    site_name: str = Form(...),
+    copyright: str = Form(None),
+    db: Session = Depends(get_db)
+):
+    from app.models.setting import SiteSetting
+    for key, value in {"site_name": site_name, "copyright": copyright}.items():
+        if value is not None:
+            row = db.query(SiteSetting).filter(SiteSetting.key == key).first()
+            if row:
+                row.value = value
+            else:
+                db.add(SiteSetting(key=key, value=value))
+    db.commit()
+    return RedirectResponse(url="/admin/settings", status_code=302)
+
 @app.post("/admin/settings/taglines")
 async def update_taglines(
     request: Request,
