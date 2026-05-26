@@ -11,12 +11,10 @@
 <body>
     <header>
         <nav class="navbar">
-            <a href="/contact" class="nav-contact">{{ t('nav.contact', lang | default('pt')) }}</a>
             <a href="/" class="logo">
                 <img src="{{ settings.get('logo_path', '/static/logo.png') }}" alt="" class="logo-icon">
                 {{ settings.get('site_name', 'Daniel Moura') }}
             </a>
-            <a href="/portfolio" class="nav-portfolio">Portfolio</a>
             <div class="language-switcher">
                 {% set current_lang = lang | default('pt') %}
                 {% if current_lang == 'pt' %}
@@ -27,6 +25,14 @@
             </div>
         </nav>
     </header>
+
+    <div class="side-nav-left">
+        <a href="/contact" class="side-nav-link">{{ t('nav.contact', lang | default('pt')) }}</a>
+    </div>
+    
+    <div class="side-nav-right">
+        <a href="/portfolio" class="side-nav-link">Portfolio</a>
+    </div>
 
     <main>
         {% block content %}{% endblock %}

@@ -50,23 +50,9 @@ header {
     max-width: 1280px;
     margin: 0 auto;
     padding: 1rem 1.5rem;
-    display: grid;
-    grid-template-columns: 1fr auto 1fr;
+    display: flex;
     align-items: center;
-    gap: 2rem;
-}
-
-.nav-contact {
-    justify-self: start;
-    font-size: 0.73rem;
-    text-transform: uppercase;
-    letter-spacing: 0.16em;
-    color: var(--muted);
-    transition: color 220ms ease;
-}
-
-.nav-contact:hover {
-    color: var(--text);
+    justify-content: center;
 }
 
 .logo {
@@ -78,7 +64,6 @@ header {
     font-size: 1rem;
     letter-spacing: 0.18em;
     text-transform: uppercase;
-    justify-self: center;
 }
 
 .logo-icon {
@@ -86,17 +71,37 @@ header {
     width: auto;
 }
 
-.nav-portfolio {
-    justify-self: end;
+.side-nav-left,
+.side-nav-right {
+    position: fixed;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 30;
+}
+
+.side-nav-left {
+    left: 2rem;
+}
+
+.side-nav-right {
+    right: 2rem;
+}
+
+.side-nav-link {
+    display: inline-block;
     font-size: 0.73rem;
     text-transform: uppercase;
     letter-spacing: 0.16em;
-    color: var(--muted);
-    transition: color 220ms ease;
+    color: var(--text);
+    background: rgba(246, 245, 243, 0.85);
+    backdrop-filter: blur(4px);
+    padding: 0.6rem 1rem;
+    border-radius: 2px;
+    transition: all 220ms ease;
 }
 
-.nav-portfolio:hover {
-    color: var(--text);
+.side-nav-link:hover {
+    background: rgba(246, 245, 243, 0.95);
 }
 
 .language-switcher {
