@@ -22,9 +22,9 @@
                 <li class="language-switcher">
                     {% set current_lang = lang | default('pt') %}
                     {% if current_lang == 'pt' %}
-                        <a href="/set-language/pt" class="active">PT</a> | <a href="/set-language/en?redirect_to={{ request.url.path }}">EN</a>
+                        <a href="{{ request.url.path }}?lang=pt" onclick="document.cookie='language=pt; max-age=31536000; path=/; samesite=lax'" class="active">PT</a> | <a href="{{ request.url.path }}?lang=en" onclick="document.cookie='language=en; max-age=31536000; path=/; samesite=lax'">EN</a>
                     {% else %}
-                        <a href="/set-language/pt?redirect_to={{ request.url.path }}">PT</a> | <a href="/set-language/en" class="active">EN</a>
+                        <a href="{{ request.url.path }}?lang=pt" onclick="document.cookie='language=pt; max-age=31536000; path=/; samesite=lax'">PT</a> | <a href="{{ request.url.path }}?lang=en" onclick="document.cookie='language=en; max-age=31536000; path=/; samesite=lax'" class="active">EN</a>
                     {% endif %}
                 </li>
             </ul>

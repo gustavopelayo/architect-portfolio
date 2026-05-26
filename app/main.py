@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Form, Depends, UploadFile, File, Cookie, Response
+from fastapi import FastAPI, Form, Depends, UploadFile, File, Cookie, Response, Query
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse, RedirectResponse
@@ -57,10 +57,16 @@ async def set_language(lang: str, response: Response, redirect_to: str = "/"):
 
 # Frontend routes
 @app.get("/", response_class=HTMLResponse)
-async def home(request: Request, db: Session = Depends(get_db), language: Optional[str] = Cookie(default="pt")):
+async def home(
+    request: Request, 
+    db: Session = Depends(get_db), 
+    lang: Optional[str] = Query(default=None),
+    language: Optional[str] = Cookie(default="pt")
+):
     from app.crud import portfolio as crud_portfolio
     from app.models.image import PortfolioImage
-    lang = validate_language(language)
+    # Prioritize query param over cookie
+    selected_lang = validate_language(lang) if lang else validate_language(language)
     site_settings = get_site_settings()
     featured = crud_portfolio.get_featured_portfolios(db)
     project_images_map = {}
@@ -73,43 +79,63 @@ async def home(request: Request, db: Session = Depends(get_db), language: Option
         "featured_portfolios": featured,
         "settings": site_settings,
         "project_images_map": project_images_map,
-        "lang": lang,
+        "lang": selected_lang,
     })
 
 @app.get("/portfolio", response_class=HTMLResponse)
-async def portfolio_page(request: Request, db: Session = Depends(get_db), language: Optional[str] = Cookie(default="pt")):
+async def portfolio_page(
+    request: Request, 
+    db: Session = Depends(get_db), 
+    lang: Optional[str] = Query(default=None),
+    language: Optional[str] = Cookie(default="pt")
+):
     from app.crud import portfolio as crud_portfolio
-    lang = validate_language(language)
+    selected_lang = validate_language(lang) if lang else validate_language(language)
     site_settings = get_site_settings()
     portfolios = crud_portfolio.get_portfolios(db, skip=0, limit=100)
-    return templates.TemplateResponse(request=request, name="portfolio.html", context={"request": request, "portfolios": portfolios, "settings": site_settings, "lang": lang})
+    return templates.TemplateResponse(request=request, name="portfolio.html", context={"request": request, "portfolios": portfolios, "settings": site_settings, "lang": selected_lang})
 
 @app.get("/portfolio/{portfolio_id}", response_class=HTMLResponse)
-async def portfolio_detail(request: Request, portfolio_id: int, db: Session = Depends(get_db), language: Optional[str] = Cookie(default="pt")):
+async def portfolio_detail(
+    request: Request, 
+    portfolio_id: int, 
+    db: Session = Depends(get_db), 
+    lang: Optional[str] = Query(default=None),
+    language: Optional[str] = Cookie(default="pt")
+):
     from app.crud import portfolio as crud_portfolio
-    lang = validate_language(language)
+    selected_lang = validate_language(lang) if lang else validate_language(language)
     site_settings = get_site_settings()
     portfolio = crud_portfolio.get_portfolio(db, portfolio_id=portfolio_id)
     if not portfolio:
         return RedirectResponse(url="/portfolio", status_code=302)
-    return templates.TemplateResponse(request=request, name="portfolio_detail.html", context={"request": request, "portfolio": portfolio, "settings": site_settings, "lang": lang})
+    return templates.TemplateResponse(request=request, name="portfolio_detail.html", context={"request": request, "portfolio": portfolio, "settings": site_settings, "lang": selected_lang})
 
 @app.get("/about", response_class=HTMLResponse)
-async def about(request: Request, db: Session = Depends(get_db), language: Optional[str] = Cookie(default="pt")):
-    lang = validate_language(language)
+async def about(
+    request: Request, 
+    db: Session = Depends(get_db), 
+    lang: Optional[str] = Query(default=None),
+    language: Optional[str] = Cookie(default="pt")
+):
+    selected_lang = validate_language(lang) if lang else validate_language(language)
     site_settings = get_site_settings()
     featured = crud_portfolio.get_featured_portfolios(db)
     return templates.TemplateResponse(
         request=request,
         name="about.html",
-        context={"request": request, "featured_portfolios": featured, "settings": site_settings, "lang": lang},
+        context={"request": request, "featured_portfolios": featured, "settings": site_settings, "lang": selected_lang},
     )
 
 @app.get("/contact", response_class=HTMLResponse)
-async def contact(request: Request, language: Optional[str] = Cookie(default="pt")):
-    lang = validate_language(language)
+async def contact(
+    request: Request, 
+    lang: Optional[str] = Query(default=None),
+    language: Optional[str] = Cookie(default="pt")
+):
+    selected_lang = validate_language(lang) if lang else validate_language(language)
     site_settings = get_site_settings()
-    return templates.TemplateResponse(request=request, name="contact.html", context={"request": request, "settings": site_settings, "lang": lang})
+    return templates.TemplateResponse(request=request, name="contact.html", context={"request": request, "settings": site_settings, "lang": selected_lang})
 
 @app.post("/contact", response_class=HTMLResponse)
 async def contact_form(
