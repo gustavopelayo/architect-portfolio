@@ -504,11 +504,8 @@ footer {
     right: 1.5rem;
     color: var(--text);
     font-size: 0.7rem;
+    font-weight: 700;
     z-index: 30;
-    background: rgba(246, 245, 243, 0.85);
-    backdrop-filter: blur(4px);
-    padding: 0.4rem 0.6rem;
-    border-radius: 2px;
 }
 
 @keyframes riseIn {
