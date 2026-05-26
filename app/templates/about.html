@@ -3,14 +3,14 @@
 {% block title %}About - {{ settings.get('site_name', 'Daniel Moura') }}{% endblock %}
 
 {% block content %}
-{% set about_title = settings.get('about_title', 'About\nDaniel Moura').split('\n') %}
+{% set about_title = settings.get('about_title_' + lang, settings.get('about_title_pt', settings.get('about_title', 'About\nDaniel Moura'))).split('\n') %}
 <section class="about-header">
     <h1>{% for line in about_title %}{{ line }}{% if not loop.first %}<br>{% endif %}{% endfor %}</h1>
 </section>
 
 <section class="about-content">
     <div class="about-text">
-        {% set paragraphs = settings.get('about_body', '').split('\n\n') %}
+        {% set paragraphs = settings.get('about_body_' + lang, settings.get('about_body_pt', settings.get('about_body', ''))).split('\n\n') %}
         {% for para in paragraphs %}
         <p>{{ para }}</p>
         {% endfor %}

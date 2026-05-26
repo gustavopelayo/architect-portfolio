@@ -56,9 +56,19 @@
         <div class="current-media">
             {% for img in hero_images %}
             <div class="media-card">
-                <img src="{{ img.image_url }}" alt="{{ img.caption or '' }}" style="height:120px">
+                <img src="{{ img.image_url }}" alt="{{ img.caption_pt or img.caption or '' }}" style="height:120px">
                 <div class="media-card-body">
-                    <span class="caption">{{ img.caption or 'No caption' }}</span>
+                    <form class="hero-caption-form">
+                        <div style="margin-bottom: 0.5rem;">
+                            <label style="font-size: 0.7rem; color: var(--muted); display: block; margin-bottom: 0.25rem;">Caption PT</label>
+                            <input type="text" name="caption_pt" value="{{ img.caption_pt or img.caption or '' }}" placeholder="Legenda (PT)" class="hero-caption-input" data-id="{{ img.id }}" data-lang="pt" style="width:100%;padding:0.35rem 0.5rem;border:1px solid var(--line);background:var(--bg);font-size:0.8rem;">
+                        </div>
+                        <div style="margin-bottom: 0.5rem;">
+                            <label style="font-size: 0.7rem; color: var(--muted); display: block; margin-bottom: 0.25rem;">Caption EN</label>
+                            <input type="text" name="caption_en" value="{{ img.caption_en or '' }}" placeholder="Caption (EN)" class="hero-caption-input" data-id="{{ img.id }}" data-lang="en" style="width:100%;padding:0.35rem 0.5rem;border:1px solid var(--line);background:var(--bg);font-size:0.8rem;">
+                        </div>
+                        <button type="button" class="hero-caption-save" title="Save">&#10003;</button>
+                    </form>
                     <a href="/admin/settings/hero/{{ img.id }}/delete" class="btn-delete-sm" onclick="return confirm('Delete this hero image?')">Remove</a>
                 </div>
             </div>
@@ -73,9 +83,15 @@
                 <label for="hero_file">Add Hero Image</label>
                 <input type="file" id="hero_file" name="file" required>
             </div>
-            <div class="form-group">
-                <label for="hero_caption">Caption (optional)</label>
-                <input type="text" id="hero_caption" name="caption">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 0.75rem;">
+                <div class="form-group">
+                    <label for="caption_pt">Caption (PT)</label>
+                    <input type="text" id="caption_pt" name="caption_pt">
+                </div>
+                <div class="form-group">
+                    <label for="caption_en">Caption (EN)</label>
+                    <input type="text" id="caption_en" name="caption_en">
+                </div>
             </div>
             <button type="submit" class="btn-upload">Upload</button>
         </form>
@@ -110,14 +126,31 @@
                 <label for="contact_phone">Phone</label>
                 <input type="text" id="contact_phone" name="phone" value="{{ settings_list.get('contact_phone', '') }}">
             </div>
-            <div class="form-group">
-                <label for="contact_address">Address</label>
-                <textarea id="contact_address" name="address" rows="3">{{ settings_list.get('contact_address', '') }}</textarea>
+            
+            <h3 style="font-size: 0.9rem; margin: 1.5rem 0 0.75rem; font-weight: 600;">Address</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                    <label for="contact_address_pt">Address (PT)</label>
+                    <textarea id="contact_address_pt" name="address_pt" rows="3">{{ settings_list.get('contact_address_pt', settings_list.get('contact_address', '')) }}</textarea>
+                </div>
+                <div class="form-group">
+                    <label for="contact_address_en">Address (EN)</label>
+                    <textarea id="contact_address_en" name="address_en" rows="3">{{ settings_list.get('contact_address_en', '') }}</textarea>
+                </div>
             </div>
-            <div class="form-group">
-                <label for="contact_blurb">Blurb</label>
-                <textarea id="contact_blurb" name="blurb" rows="4">{{ settings_list.get('contact_blurb', '') }}</textarea>
+            
+            <h3 style="font-size: 0.9rem; margin: 1.5rem 0 0.75rem; font-weight: 600;">Blurb</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                    <label for="contact_blurb_pt">Blurb (PT)</label>
+                    <textarea id="contact_blurb_pt" name="blurb_pt" rows="4">{{ settings_list.get('contact_blurb_pt', settings_list.get('contact_blurb', '')) }}</textarea>
+                </div>
+                <div class="form-group">
+                    <label for="contact_blurb_en">Blurb (EN)</label>
+                    <textarea id="contact_blurb_en" name="blurb_en" rows="4">{{ settings_list.get('contact_blurb_en', '') }}</textarea>
+                </div>
             </div>
+            
             <button type="submit">Save Contact Info</button>
         </form>
     </section>
@@ -127,16 +160,34 @@
     <section class="settings-section">
         <h2>About Page</h2>
         <form action="/admin/settings/about" method="POST" enctype="multipart/form-data">
-            <div class="form-group">
-                <label for="about_title">Title</label>
-                <input type="text" id="about_title" name="title" value="{{ settings_list.get('about_title', 'About\nDaniel Moura') }}">
-                <p class="settings-hint">Use \n for line breaks (e.g. About\nDaniel Moura)</p>
+            <h3 style="font-size: 0.9rem; margin: 1rem 0 0.75rem; font-weight: 600;">Title</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                    <label for="about_title_pt">Title (PT)</label>
+                    <input type="text" id="about_title_pt" name="title_pt" value="{{ settings_list.get('about_title_pt', settings_list.get('about_title', 'About\nDaniel Moura')) }}">
+                    <p class="settings-hint">Use \n for line breaks (e.g. About\nDaniel Moura)</p>
+                </div>
+                <div class="form-group">
+                    <label for="about_title_en">Title (EN)</label>
+                    <input type="text" id="about_title_en" name="title_en" value="{{ settings_list.get('about_title_en', '') }}">
+                    <p class="settings-hint">Use \n for line breaks (e.g. About\nDaniel Moura)</p>
+                </div>
             </div>
-            <div class="form-group">
-                <label for="about_body">Body Text</label>
-                <textarea id="about_body" name="body" rows="8">{{ settings_list.get('about_body', '') }}</textarea>
-                <p class="settings-hint">Separate paragraphs with a blank line.</p>
+            
+            <h3 style="font-size: 0.9rem; margin: 1.5rem 0 0.75rem; font-weight: 600;">Body Text</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                    <label for="about_body_pt">Body Text (PT)</label>
+                    <textarea id="about_body_pt" name="body_pt" rows="8">{{ settings_list.get('about_body_pt', settings_list.get('about_body', '')) }}</textarea>
+                    <p class="settings-hint">Separate paragraphs with a blank line.</p>
+                </div>
+                <div class="form-group">
+                    <label for="about_body_en">Body Text (EN)</label>
+                    <textarea id="about_body_en" name="body_en" rows="8">{{ settings_list.get('about_body_en', '') }}</textarea>
+                    <p class="settings-hint">Separate paragraphs with a blank line.</p>
+                </div>
             </div>
+            
             <div class="form-group">
                 <label for="about_image">About Image</label>
                 <input type="file" id="about_image" name="file" accept="image/*">
@@ -149,4 +200,35 @@
         </form>
     </section>
 </section>
+
+<script>
+// Hero image caption editing
+document.querySelectorAll('.hero-caption-form').forEach(function(form) {
+    var inputs = form.querySelectorAll('.hero-caption-input');
+    var btn = form.querySelector('.hero-caption-save');
+    var imageId = inputs[0].dataset.id;
+    
+    function save() {
+        var caption_pt = form.querySelector('[data-lang="pt"]').value;
+        var caption_en = form.querySelector('[data-lang="en"]').value;
+        
+        btn.textContent = '...';
+        fetch('/admin/settings/hero/' + imageId + '/caption', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            body: 'caption_pt=' + encodeURIComponent(caption_pt) + '&caption_en=' + encodeURIComponent(caption_en)
+        }).then(function() {
+            btn.textContent = '\u2713';
+            setTimeout(function() { btn.textContent = '\u2713'; }, 1500);
+        });
+    }
+    
+    btn.addEventListener('click', save);
+    inputs.forEach(function(inp) {
+        inp.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') { e.preventDefault(); save(); }
+        });
+    });
+});
+</script>
 {% endblock %}

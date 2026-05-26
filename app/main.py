@@ -341,7 +341,8 @@ async def upload_logo(
 async def upload_hero_image(
     request: Request,
     file: UploadFile = File(...),
-    caption: str = Form(None),
+    caption_pt: str = Form(None),
+    caption_en: str = Form(None),
     db: Session = Depends(get_db)
 ):
     from app.models.setting import HeroImage
@@ -356,7 +357,9 @@ async def upload_hero_image(
     max_order = db.query(sa_func.max(HeroImage.sort_order)).scalar() or 0
     db.add(HeroImage(
         image_url=f"/static/uploads/hero/{filename}",
-        caption=caption,
+        caption_pt=caption_pt,
+        caption_en=caption_en,
+        caption=caption_pt,  # Legacy field
         sort_order=max_order + 1
     ))
     db.commit()
@@ -371,6 +374,22 @@ async def delete_hero_image(hero_id: int, db: Session = Depends(get_db)):
         if filepath.exists():
             filepath.unlink()
         db.delete(img)
+        db.commit()
+    return RedirectResponse(url="/admin/settings", status_code=302)
+
+@app.post("/admin/settings/hero/{hero_id}/caption")
+async def update_hero_caption(
+    hero_id: int,
+    caption_pt: str = Form(""),
+    caption_en: str = Form(""),
+    db: Session = Depends(get_db)
+):
+    from app.models.setting import HeroImage
+    img = db.query(HeroImage).filter(HeroImage.id == hero_id).first()
+    if img:
+        img.caption_pt = caption_pt
+        img.caption_en = caption_en
+        img.caption = caption_pt  # Legacy field
         db.commit()
     return RedirectResponse(url="/admin/settings", status_code=302)
 
@@ -390,16 +409,20 @@ async def update_contact(
     request: Request,
     email: str = Form(None),
     phone: str = Form(None),
-    address: str = Form(None),
-    blurb: str = Form(None),
+    address_pt: str = Form(None),
+    address_en: str = Form(None),
+    blurb_pt: str = Form(None),
+    blurb_en: str = Form(None),
     db: Session = Depends(get_db)
 ):
     from app.models.setting import SiteSetting
     updates = {
         "contact_email": email,
         "contact_phone": phone,
-        "contact_address": address,
-        "contact_blurb": blurb,
+        "contact_address_pt": address_pt,
+        "contact_address_en": address_en,
+        "contact_blurb_pt": blurb_pt,
+        "contact_blurb_en": blurb_en,
     }
     for key, value in updates.items():
         if value is not None:
@@ -414,24 +437,30 @@ async def update_contact(
 @app.post("/admin/settings/about")
 async def update_about(
     request: Request,
-    title: str = Form(None),
-    body: str = Form(None),
+    title_pt: str = Form(None),
+    title_en: str = Form(None),
+    body_pt: str = Form(None),
+    body_en: str = Form(None),
     file: UploadFile = File(None),
     db: Session = Depends(get_db)
 ):
     from app.models.setting import SiteSetting
-    if title is not None:
-        row = db.query(SiteSetting).filter(SiteSetting.key == "about_title").first()
-        if row:
-            row.value = title
-        else:
-            db.add(SiteSetting(key="about_title", value=title))
-    if body is not None:
-        row = db.query(SiteSetting).filter(SiteSetting.key == "about_body").first()
-        if row:
-            row.value = body
-        else:
-            db.add(SiteSetting(key="about_body", value=body))
+    
+    updates = {
+        "about_title_pt": title_pt,
+        "about_title_en": title_en,
+        "about_body_pt": body_pt,
+        "about_body_en": body_en,
+    }
+    
+    for key, value in updates.items():
+        if value is not None:
+            row = db.query(SiteSetting).filter(SiteSetting.key == key).first()
+            if row:
+                row.value = value
+            else:
+                db.add(SiteSetting(key=key, value=value))
+    
     if file and file.filename:
         upload_dir = Path("app/static/uploads")
         upload_dir.mkdir(parents=True, exist_ok=True)
