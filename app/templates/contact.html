@@ -41,12 +41,14 @@
         {% endif %}
     </div>
     <div class="contact-info">
-        <p>{{ settings.get('contact_blurb_' + lang, settings.get('contact_blurb_pt', settings.get('contact_blurb', 'We would love to hear from you.'))) }}</p>
+        <p>{{ settings.get('contact_blurb_' + lang, settings.get('contact_blurb_pt', settings.get('contact_blurb', ''))) }}</p>
         
         <p>
-            Email: {{ settings.get('contact_email', 'dadamoura@cloud.com') }}<br>
-            Phone: {{ settings.get('contact_phone', '+351 931 110 004') }}<br>
-            Address: {{ settings.get('contact_address_' + lang, settings.get('contact_address_pt', settings.get('contact_address', 'Rua Augusta, 123\nLisbon, Portugal'))) | replace('\n', '<br>') | safe }}
+            {% if settings.get('contact_email') %}Email: {{ settings.get('contact_email') }}<br>{% endif %}
+            {% if settings.get('contact_phone') %}Phone: {{ settings.get('contact_phone') }}<br>{% endif %}
+            {% if settings.get('contact_address_' + lang, settings.get('contact_address_pt', settings.get('contact_address', ''))) %}
+            Address: {{ settings.get('contact_address_' + lang, settings.get('contact_address_pt', settings.get('contact_address', ''))) | replace('\n', '<br>') | safe }}
+            {% endif %}
         </p>
     </div>
 </section>
