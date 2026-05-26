@@ -9,22 +9,21 @@
     <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <header>
-        <nav class="navbar">
-            <a href="/" class="logo">
-                <img src="{{ settings.get('logo_path', '/static/logo.png') }}" alt="" class="logo-icon">
-                {{ settings.get('site_name', 'Daniel Moura') }}
-            </a>
-            <div class="language-switcher">
-                {% set current_lang = lang | default('pt') %}
-                {% if current_lang == 'pt' %}
-                    <a href="{{ request.url.path }}?lang=pt" onclick="document.cookie='language=pt; max-age=31536000; path=/; samesite=lax'" class="active">PT</a> | <a href="{{ request.url.path }}?lang=en" onclick="document.cookie='language=en; max-age=31536000; path=/; samesite=lax'">EN</a>
-                {% else %}
-                    <a href="{{ request.url.path }}?lang=pt" onclick="document.cookie='language=pt; max-age=31536000; path=/; samesite=lax'">PT</a> | <a href="{{ request.url.path }}?lang=en" onclick="document.cookie='language=en; max-age=31536000; path=/; samesite=lax'" class="active">EN</a>
-                {% endif %}
-            </div>
-        </nav>
-    </header>
+    <div class="logo-center">
+        <a href="/" class="logo">
+            <img src="{{ settings.get('logo_path', '/static/logo.png') }}" alt="" class="logo-icon">
+            {{ settings.get('site_name', 'Daniel Moura') }}
+        </a>
+    </div>
+
+    <div class="language-switcher">
+        {% set current_lang = lang | default('pt') %}
+        {% if current_lang == 'pt' %}
+            <a href="{{ request.url.path }}?lang=pt" onclick="document.cookie='language=pt; max-age=31536000; path=/; samesite=lax'" class="active">PT</a> | <a href="{{ request.url.path }}?lang=en" onclick="document.cookie='language=en; max-age=31536000; path=/; samesite=lax'">EN</a>
+        {% else %}
+            <a href="{{ request.url.path }}?lang=pt" onclick="document.cookie='language=pt; max-age=31536000; path=/; samesite=lax'">PT</a> | <a href="{{ request.url.path }}?lang=en" onclick="document.cookie='language=en; max-age=31536000; path=/; samesite=lax'" class="active">EN</a>
+        {% endif %}
+    </div>
 
     <div class="side-nav-left">
         <a href="/contact" class="side-nav-link">{{ t('nav.contact', lang | default('pt')) }}</a>
