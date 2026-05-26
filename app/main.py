@@ -269,6 +269,7 @@ async def upload_logo(
     db: Session = Depends(get_db)
 ):
     from app.models.setting import SiteSetting
+    import time
     upload_dir = Path("app/static/uploads")
     upload_dir.mkdir(parents=True, exist_ok=True)
     ext = Path(file.filename).suffix or ".png"
@@ -276,11 +277,16 @@ async def upload_logo(
     filepath = upload_dir / filename
     with open(filepath, "wb") as f:
         shutil.copyfileobj(file.file, f)
+    
+    # Add timestamp for cache-busting
+    timestamp = int(time.time())
+    logo_url = f"/static/uploads/{filename}?v={timestamp}"
+    
     row = db.query(SiteSetting).filter(SiteSetting.key == "logo_path").first()
     if row:
-        row.value = f"/static/uploads/{filename}"
+        row.value = logo_url
     else:
-        db.add(SiteSetting(key="logo_path", value=f"/static/uploads/{filename}"))
+        db.add(SiteSetting(key="logo_path", value=logo_url))
     db.commit()
     return RedirectResponse(url="/admin/settings", status_code=302)
 
