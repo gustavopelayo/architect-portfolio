@@ -507,11 +507,15 @@ button[type="submit"]:hover {
 
 footer {
     position: fixed;
-    bottom: 2rem;
-    right: 2rem;
-    color: var(--muted);
+    bottom: 1rem;
+    right: 1.5rem;
+    color: var(--text);
     font-size: 0.7rem;
     z-index: 30;
+    background: rgba(246, 245, 243, 0.85);
+    backdrop-filter: blur(4px);
+    padding: 0.4rem 0.6rem;
+    border-radius: 2px;
 }
 
 @keyframes riseIn {
