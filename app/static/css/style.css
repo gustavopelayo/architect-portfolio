@@ -40,8 +40,7 @@ a {
 .logo-center {
     position: fixed;
     top: 1rem;
-    left: 50%;
-    transform: translateX(-50%);
+    left: 1.5rem;
     z-index: 30;
 }
 
@@ -93,13 +92,14 @@ a {
 }
 
 .language-switcher {
-    position: absolute;
+    position: fixed;
     top: 1rem;
     right: 1.5rem;
     font-size: 0.7rem;
     text-transform: uppercase;
     letter-spacing: 0.12em;
     color: var(--muted);
+    z-index: 30;
 }
 
 .language-switcher a {
@@ -881,7 +881,7 @@ footer {
 
 .fullscreen-caption {
     position: fixed;
-    bottom: 2rem;
+    top: 1rem;
     left: 50%;
     transform: translateX(-50%);
     color: var(--text);
