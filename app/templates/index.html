@@ -15,55 +15,11 @@
     {% endif %}
 </section>
 
-<section class="projects-list">
-    {% for portfolio in featured_portfolios %}
-    <article class="project-item">
-        <div class="project-thumb-wrap" style="cursor:pointer;">
-            {% if portfolio.images %}
-            <img src="{{ portfolio.images[0].image_url }}" alt="{{ get_translated_field(portfolio, 'name', lang) }}" class="project-thumbnail" data-project="{{ portfolio.id }}" data-index="0">
-            {% else %}
-            <div class="project-thumbnail" style="background: #f5f5f5;"></div>
-            {% endif %}
-        </div>
-        <a href="/portfolio/{{ portfolio.id }}">{{ get_translated_field(portfolio, 'name', lang) }}</a>
-        <span class="project-year">{% if portfolio.year %}{{ portfolio.year }}{% else %}{{ t('home.view_project', lang) }}{% endif %}</span>
-    </article>
-    {% else %}
-    <article class="project-item">
-        <div class="project-thumbnail" style="background: #f5f5f5;"></div>
-        <a href="#">Selected Work I</a>
-        <span class="project-year">2024</span>
-    </article>
-    <article class="project-item">
-        <div class="project-thumbnail" style="background: #f5f5f5;"></div>
-        <a href="#">Selected Work II</a>
-        <span class="project-year">2023</span>
-    </article>
-    <article class="project-item">
-        <div class="project-thumbnail" style="background: #f5f5f5;"></div>
-        <a href="#">Selected Work III</a>
-        <span class="project-year">2023</span>
-    </article>
-    {% endfor %}
-</section>
+<div class="bottom-nav">
+    <a href="/about" class="bottom-about">{{ t('nav.about', lang | default('pt')) }}</a>
+</div>
 
 <script>
-var projectImages = {{ project_images_map | default({}) | tojson }};
-
-document.querySelectorAll('.project-thumb-wrap').forEach(function(wrap) {
-    var img = wrap.querySelector('img');
-    if (!img) return;
-    var pid = img.dataset.project;
-    var images = projectImages[pid];
-    if (!images || images.length < 2) return;
-    var idx = 0;
-    img.addEventListener('click', function(e) {
-        e.preventDefault();
-        idx = (idx + 1) % images.length;
-        img.src = images[idx];
-    });
-});
-
 (function() {
     var slides = document.querySelectorAll('.hero-slide');
     var sidx = 0;
