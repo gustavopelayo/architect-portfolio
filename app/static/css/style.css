@@ -120,14 +120,14 @@ main {
     width: 100%;
     margin: 0;
     padding: 0;
-    height: min(85vh, 900px);
+    height: 100vh;
     position: relative;
     overflow: hidden;
 }
 
 .hero-image {
     width: 100%;
-    height: min(85vh, 900px);
+    height: 100vh;
     object-fit: cover;
     display: block;
     filter: grayscale(100%);
@@ -150,7 +150,7 @@ main {
     top: 0;
     left: 0;
     width: 100%;
-    height: min(85vh, 900px);
+    height: 100vh;
     object-fit: cover;
     display: block;
     filter: grayscale(100%);
