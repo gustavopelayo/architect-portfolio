@@ -132,8 +132,6 @@ main {
     display: block;
     filter: grayscale(100%);
     transition: filter 0.3s ease;
-    mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
-    -webkit-mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
 }
 .hero-image:hover {
     filter: grayscale(0%);
@@ -159,8 +157,6 @@ main {
     opacity: 0;
     pointer-events: none;
     transition: opacity 1s ease, filter 0.3s ease;
-    mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
-    -webkit-mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
 }
 
 .hero-slide.active {
