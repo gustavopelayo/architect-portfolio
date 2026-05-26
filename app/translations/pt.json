@@ -1,0 +1,56 @@
+{
+  "nav": {
+    "home": "Início",
+    "about": "Sobre",
+    "contact": "Contato",
+    "admin": "Admin"
+  },
+  "home": {
+    "view_project": "Ver Projeto",
+    "featured_work": "Trabalhos em Destaque"
+  },
+  "about": {
+    "title": "Sobre",
+    "about_me": "Sobre Mim"
+  },
+  "contact": {
+    "title": "Contato",
+    "get_in_touch": "Entre em Contato",
+    "name": "Nome",
+    "email": "Email",
+    "message": "Mensagem",
+    "send": "Enviar",
+    "success": "Mensagem enviada com sucesso!",
+    "error": "Erro ao enviar mensagem. Tente novamente."
+  },
+  "admin": {
+    "title": "Painel Administrativo",
+    "projects": "Projetos",
+    "settings": "Configurações",
+    "logout": "Sair",
+    "add_project": "Adicionar Projeto",
+    "edit_project": "Editar Projeto",
+    "delete_project": "Deletar Projeto",
+    "confirm_delete": "Tem certeza que deseja deletar este projeto?",
+    "save": "Salvar",
+    "cancel": "Cancelar",
+    "upload_image": "Upload de Imagem",
+    "hero_image": "Imagem Principal",
+    "logo": "Logo",
+    "bio": "Bio",
+    "social_links": "Links Sociais",
+    "project_name": "Nome do Projeto",
+    "description": "Descrição",
+    "location": "Localização",
+    "year": "Ano",
+    "categories": "Categorias",
+    "featured": "Destacado",
+    "images": "Imagens",
+    "caption": "Legenda",
+    "portuguese": "Português",
+    "english": "Inglês"
+  },
+  "footer": {
+    "rights": "Todos os direitos reservados"
+  }
+}

@@ -7,7 +7,7 @@
     {% if settings.hero_images %}
     <div class="hero-slideshow">
         {% for img in settings.hero_images %}
-        <img src="{{ img.image_url }}" alt="{{ img.caption or '' }}" class="hero-image hero-slide{% if loop.first %} active{% endif %}">
+        <img src="{{ img.image_url }}" alt="{{ get_translated_field(img, 'caption', lang) or '' }}" class="hero-image hero-slide{% if loop.first %} active{% endif %}">
         {% endfor %}
     </div>
     {% else %}
@@ -20,13 +20,13 @@
     <article class="project-item">
         <div class="project-thumb-wrap" style="cursor:pointer;">
             {% if portfolio.images %}
-            <img src="{{ portfolio.images[0].image_url }}" alt="{{ portfolio.name }}" class="project-thumbnail" data-project="{{ portfolio.id }}" data-index="0">
+            <img src="{{ portfolio.images[0].image_url }}" alt="{{ get_translated_field(portfolio, 'name', lang) }}" class="project-thumbnail" data-project="{{ portfolio.id }}" data-index="0">
             {% else %}
             <div class="project-thumbnail" style="background: #f5f5f5;"></div>
             {% endif %}
         </div>
-        <a href="/portfolio/{{ portfolio.id }}">{{ portfolio.name }}</a>
-        <span class="project-year">{% if portfolio.year %}{{ portfolio.year }}{% else %}Project{% endif %}</span>
+        <a href="/portfolio/{{ portfolio.id }}">{{ get_translated_field(portfolio, 'name', lang) }}</a>
+        <span class="project-year">{% if portfolio.year %}{{ portfolio.year }}{% else %}{{ t('home.view_project', lang) }}{% endif %}</span>
     </article>
     {% else %}
     <article class="project-item">

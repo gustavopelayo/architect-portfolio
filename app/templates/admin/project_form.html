@@ -3,28 +3,72 @@
 {% block title %}{% if project %}Edit{% else %}Create{% endif %} Project - Admin{% endblock %}
 
 {% block content %}
+<style>
+.bilingual-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+.lang-column {
+    border: 1px solid var(--line);
+    padding: 1.5rem;
+    border-radius: 4px;
+    background: var(--surface);
+}
+.lang-column h3 {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 1rem;
+    color: var(--muted);
+}
+</style>
+
 <section class="project-form">
     <h1>{% if project %}Edit{% else %}Create{% endif %} Project</h1>
     
     <form action="{% if project %}/admin/projects/{{ project.id }}/edit{% else %}/admin/projects/create{% endif %}" method="POST">
-        <div class="form-group">
-            <label for="name">Project Name</label>
-            <input type="text" id="name" name="name" value="{% if project %}{{ project.name }}{% endif %}" required>
-        </div>
-        
-        <div class="form-group">
-            <label for="description">Description</label>
-            <textarea id="description" name="description" rows="10">{% if project %}{{ project.description }}{% endif %}</textarea>
+        <div class="bilingual-group">
+            <div class="lang-column">
+                <h3>Português (obrigatório)</h3>
+                <div class="form-group">
+                    <label for="name_pt">Project Name</label>
+                    <input type="text" id="name_pt" name="name_pt" value="{% if project %}{{ project.name_pt or project.name }}{% endif %}" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="description_pt">Description</label>
+                    <textarea id="description_pt" name="description_pt" rows="10">{% if project %}{{ project.description_pt or project.description }}{% endif %}</textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="location_pt">Location</label>
+                    <input type="text" id="location_pt" name="location_pt" value="{% if project %}{{ project.location_pt or project.location }}{% endif %}">
+                </div>
+            </div>
+            
+            <div class="lang-column">
+                <h3>English (opcional)</h3>
+                <div class="form-group">
+                    <label for="name_en">Project Name</label>
+                    <input type="text" id="name_en" name="name_en" value="{% if project %}{{ project.name_en }}{% endif %}">
+                </div>
+                
+                <div class="form-group">
+                    <label for="description_en">Description</label>
+                    <textarea id="description_en" name="description_en" rows="10">{% if project %}{{ project.description_en }}{% endif %}</textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="location_en">Location</label>
+                    <input type="text" id="location_en" name="location_en" value="{% if project %}{{ project.location_en }}{% endif %}">
+                </div>
+            </div>
         </div>
         
         <div class="form-group">
             <label for="year">Year</label>
             <input type="number" id="year" name="year" value="{% if project %}{{ project.year }}{% endif %}">
-        </div>
-        
-        <div class="form-group">
-            <label for="location">Location</label>
-            <input type="text" id="location" name="location" value="{% if project %}{{ project.location }}{% endif %}">
         </div>
         
         <button type="submit">{% if project %}Update{% else %}Create{% endif %} Project</button>
@@ -50,7 +94,14 @@
                 </div>
                 <div class="media-card-body">
                     <form class="caption-form">
-                        <input type="text" name="caption" value="{{ image.caption or '' }}" placeholder="No caption" class="caption-input" data-id="{{ image.id }}">
+                        <div style="margin-bottom: 0.5rem;">
+                            <label style="font-size: 0.7rem; color: var(--muted); display: block; margin-bottom: 0.25rem;">PT</label>
+                            <input type="text" name="caption_pt" value="{{ image.caption_pt or image.caption or '' }}" placeholder="Legenda (PT)" class="caption-input" data-id="{{ image.id }}" data-lang="pt">
+                        </div>
+                        <div style="margin-bottom: 0.5rem;">
+                            <label style="font-size: 0.7rem; color: var(--muted); display: block; margin-bottom: 0.25rem;">EN</label>
+                            <input type="text" name="caption_en" value="{{ image.caption_en or '' }}" placeholder="Caption (EN)" class="caption-input" data-id="{{ image.id }}" data-lang="en">
+                        </div>
                         <button type="button" class="caption-save" title="Save">&#10003;</button>
                     </form>
                     <a href="/admin/images/{{ image.id }}/delete" class="btn-delete-sm" onclick="return confirm('Delete this image?')">Remove</a>
@@ -67,9 +118,15 @@
                 <label for="image_file">Add Image</label>
                 <input type="file" id="image_file" name="file" accept="image/*,.pdf" required>
             </div>
-            <div class="form-group">
-                <label for="image_caption">Caption (optional)</label>
-                <input type="text" id="image_caption" name="caption">
+            <div class="bilingual-group" style="grid-template-columns: 1fr 1fr; margin-top: 1rem;">
+                <div class="form-group">
+                    <label for="caption_pt">Caption (PT)</label>
+                    <input type="text" id="caption_pt" name="caption_pt">
+                </div>
+                <div class="form-group">
+                    <label for="caption_en">Caption (EN)</label>
+                    <input type="text" id="caption_en" name="caption_en">
+                </div>
             </div>
             <button type="submit" class="btn-upload">Upload Image</button>
         </form>
@@ -94,7 +151,14 @@
                 </div>
                 <div class="media-card-body">
                     <form class="caption-form">
-                        <input type="text" name="caption" value="{{ image.caption or '' }}" placeholder="No caption" class="caption-input" data-id="{{ image.id }}">
+                        <div style="margin-bottom: 0.5rem;">
+                            <label style="font-size: 0.7rem; color: var(--muted); display: block; margin-bottom: 0.25rem;">PT</label>
+                            <input type="text" name="caption_pt" value="{{ image.caption_pt or image.caption or '' }}" placeholder="Legenda (PT)" class="caption-input" data-id="{{ image.id }}" data-lang="pt">
+                        </div>
+                        <div style="margin-bottom: 0.5rem;">
+                            <label style="font-size: 0.7rem; color: var(--muted); display: block; margin-bottom: 0.25rem;">EN</label>
+                            <input type="text" name="caption_en" value="{{ image.caption_en or '' }}" placeholder="Caption (EN)" class="caption-input" data-id="{{ image.id }}" data-lang="en">
+                        </div>
                         <button type="button" class="caption-save" title="Save">&#10003;</button>
                     </form>
                     <a href="/admin/images/{{ image.id }}/delete" class="btn-delete-sm" onclick="return confirm('Delete this technical drawing?')">Remove</a>
@@ -111,9 +175,15 @@
                 <label for="tech_file">Add Technical Drawing</label>
                 <input type="file" id="tech_file" name="file" accept="image/*,.pdf,.png,.jpg,.jpeg" required>
             </div>
-            <div class="form-group">
-                <label for="tech_caption">Caption (optional)</label>
-                <input type="text" id="tech_caption" name="caption">
+            <div class="bilingual-group" style="grid-template-columns: 1fr 1fr; margin-top: 1rem;">
+                <div class="form-group">
+                    <label for="tech_caption_pt">Caption (PT)</label>
+                    <input type="text" id="tech_caption_pt" name="caption_pt">
+                </div>
+                <div class="form-group">
+                    <label for="tech_caption_en">Caption (EN)</label>
+                    <input type="text" id="tech_caption_en" name="caption_en">
+                </div>
             </div>
             <button type="submit" class="btn-upload">Upload Technical Drawing</button>
         </form>
@@ -122,24 +192,30 @@
 </section>
 <script>
 document.querySelectorAll('.caption-form').forEach(function(form) {
-    var inp = form.querySelector('.caption-input');
+    var inputs = form.querySelectorAll('.caption-input');
     var btn = form.querySelector('.caption-save');
+    var imageId = inputs[0].dataset.id;
+    
     function save() {
-        var val = inp.value;
-        var id = inp.dataset.id;
+        var caption_pt = form.querySelector('[data-lang="pt"]').value;
+        var caption_en = form.querySelector('[data-lang="en"]').value;
+        
         btn.textContent = '...';
-        fetch('/admin/images/' + id + '/caption', {
+        fetch('/admin/images/' + imageId + '/caption', {
             method: 'POST',
             headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-            body: 'caption=' + encodeURIComponent(val)
+            body: 'caption_pt=' + encodeURIComponent(caption_pt) + '&caption_en=' + encodeURIComponent(caption_en)
         }).then(function() {
             btn.textContent = '\u2713';
             setTimeout(function() { btn.textContent = '\u2713'; }, 1500);
         });
     }
+    
     btn.addEventListener('click', save);
-    inp.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter') { e.preventDefault(); save(); }
+    inputs.forEach(function(inp) {
+        inp.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') { e.preventDefault(); save(); }
+        });
     });
 });
 </script>

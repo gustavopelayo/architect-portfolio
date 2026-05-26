@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Form, Depends, UploadFile, File
+from fastapi import FastAPI, Form, Depends, UploadFile, File, Cookie, Response
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse, RedirectResponse
@@ -10,6 +10,7 @@ import shutil
 import uuid
 from pathlib import Path
 from datetime import datetime
+from typing import Optional
 from app.api.v1.endpoints import portfolio, auth
 from app.db.session import get_db
 from app.core.security import authenticate_user, create_access_token
@@ -17,6 +18,7 @@ from app.crud import portfolio as crud_portfolio
 from app.core.settings_helper import get_site_settings
 from app.db.base import Base
 from app.db.session import engine
+from app.utils.i18n import validate_language, get_translation, get_translated_field
 
 app = FastAPI(title="Architect Portfolio")
 
@@ -30,15 +32,35 @@ app.mount("/static", StaticFiles(directory="app/static"), name="static")
 # Templates
 templates = Jinja2Templates(directory="app/templates")
 
+# Add i18n helpers to Jinja2 globals
+templates.env.globals["t"] = get_translation
+templates.env.globals["get_translated_field"] = get_translated_field
+
 # Include API routes
 app.include_router(portfolio.router, prefix="/api/v1")
 app.include_router(auth.router, prefix="/api/v1/auth", tags=["auth"])
 
+# Language switching route
+@app.get("/set-language/{lang}")
+async def set_language(lang: str, response: Response, redirect_to: str = "/"):
+    """Set language preference via cookie and redirect."""
+    validated_lang = validate_language(lang)
+    response = RedirectResponse(url=redirect_to, status_code=302)
+    response.set_cookie(
+        key="language",
+        value=validated_lang,
+        max_age=31536000,  # 1 year
+        httponly=True,
+        samesite="lax"
+    )
+    return response
+
 # Frontend routes
 @app.get("/", response_class=HTMLResponse)
-async def home(request: Request, db: Session = Depends(get_db)):
+async def home(request: Request, db: Session = Depends(get_db), language: Optional[str] = Cookie(default="pt")):
     from app.crud import portfolio as crud_portfolio
     from app.models.image import PortfolioImage
+    lang = validate_language(language)
     site_settings = get_site_settings()
     featured = crud_portfolio.get_featured_portfolios(db)
     project_images_map = {}
@@ -51,38 +73,43 @@ async def home(request: Request, db: Session = Depends(get_db)):
         "featured_portfolios": featured,
         "settings": site_settings,
         "project_images_map": project_images_map,
+        "lang": lang,
     })
 
 @app.get("/portfolio", response_class=HTMLResponse)
-async def portfolio_page(request: Request, db: Session = Depends(get_db)):
+async def portfolio_page(request: Request, db: Session = Depends(get_db), language: Optional[str] = Cookie(default="pt")):
     from app.crud import portfolio as crud_portfolio
+    lang = validate_language(language)
     site_settings = get_site_settings()
     portfolios = crud_portfolio.get_portfolios(db, skip=0, limit=100)
-    return templates.TemplateResponse(request=request, name="portfolio.html", context={"request": request, "portfolios": portfolios, "settings": site_settings})
+    return templates.TemplateResponse(request=request, name="portfolio.html", context={"request": request, "portfolios": portfolios, "settings": site_settings, "lang": lang})
 
 @app.get("/portfolio/{portfolio_id}", response_class=HTMLResponse)
-async def portfolio_detail(request: Request, portfolio_id: int, db: Session = Depends(get_db)):
+async def portfolio_detail(request: Request, portfolio_id: int, db: Session = Depends(get_db), language: Optional[str] = Cookie(default="pt")):
     from app.crud import portfolio as crud_portfolio
+    lang = validate_language(language)
     site_settings = get_site_settings()
     portfolio = crud_portfolio.get_portfolio(db, portfolio_id=portfolio_id)
     if not portfolio:
         return RedirectResponse(url="/portfolio", status_code=302)
-    return templates.TemplateResponse(request=request, name="portfolio_detail.html", context={"request": request, "portfolio": portfolio, "settings": site_settings})
+    return templates.TemplateResponse(request=request, name="portfolio_detail.html", context={"request": request, "portfolio": portfolio, "settings": site_settings, "lang": lang})
 
 @app.get("/about", response_class=HTMLResponse)
-async def about(request: Request, db: Session = Depends(get_db)):
+async def about(request: Request, db: Session = Depends(get_db), language: Optional[str] = Cookie(default="pt")):
+    lang = validate_language(language)
     site_settings = get_site_settings()
     featured = crud_portfolio.get_featured_portfolios(db)
     return templates.TemplateResponse(
         request=request,
         name="about.html",
-        context={"request": request, "featured_portfolios": featured, "settings": site_settings},
+        context={"request": request, "featured_portfolios": featured, "settings": site_settings, "lang": lang},
     )
 
 @app.get("/contact", response_class=HTMLResponse)
-async def contact(request: Request):
+async def contact(request: Request, language: Optional[str] = Cookie(default="pt")):
+    lang = validate_language(language)
     site_settings = get_site_settings()
-    return templates.TemplateResponse(request=request, name="contact.html", context={"request": request, "settings": site_settings})
+    return templates.TemplateResponse(request=request, name="contact.html", context={"request": request, "settings": site_settings, "lang": lang})
 
 @app.post("/contact", response_class=HTMLResponse)
 async def contact_form(
@@ -147,20 +174,31 @@ async def create_project_form(request: Request):
 @app.post("/admin/projects/create")
 async def create_project(
     request: Request,
-    name: str = Form(...),
-    description: str = Form(None),
+    name_pt: str = Form(...),
+    name_en: str = Form(None),
+    description_pt: str = Form(None),
+    description_en: str = Form(None),
     year: int = Form(None),
-    location: str = Form(None),
+    location_pt: str = Form(None),
+    location_en: str = Form(None),
     db: Session = Depends(get_db)
 ):
-    from app.schemas.portfolio import PortfolioCreate
-    portfolio_data = PortfolioCreate(
-        name=name,
-        description=description,
+    from app.models.portfolio import Portfolio
+    portfolio = Portfolio(
+        name_pt=name_pt,
+        name_en=name_en,
+        description_pt=description_pt,
+        description_en=description_en,
         year=year,
-        location=location,
+        location_pt=location_pt,
+        location_en=location_en,
+        # Keep legacy fields for backward compatibility
+        name=name_pt,
+        description=description_pt,
+        location=location_pt
     )
-    crud_portfolio.create_portfolio(db=db, portfolio=portfolio_data)
+    db.add(portfolio)
+    db.commit()
     return RedirectResponse(url="/admin/dashboard", status_code=302)
 
 @app.get("/admin/projects/{portfolio_id}/edit", response_class=HTMLResponse)
@@ -179,20 +217,29 @@ async def edit_project_form(request: Request, portfolio_id: int, db: Session = D
 async def edit_project(
     request: Request,
     portfolio_id: int,
-    name: str = Form(...),
-    description: str = Form(None),
+    name_pt: str = Form(...),
+    name_en: str = Form(None),
+    description_pt: str = Form(None),
+    description_en: str = Form(None),
     year: int = Form(None),
-    location: str = Form(None),
+    location_pt: str = Form(None),
+    location_en: str = Form(None),
     db: Session = Depends(get_db)
 ):
-    from app.schemas.portfolio import PortfolioUpdate
-    portfolio_data = PortfolioUpdate(
-        name=name,
-        description=description,
-        year=year,
-        location=location,
-    )
-    crud_portfolio.update_portfolio(db=db, portfolio_id=portfolio_id, portfolio=portfolio_data)
+    portfolio = crud_portfolio.get_portfolio(db, portfolio_id=portfolio_id)
+    if portfolio:
+        portfolio.name_pt = name_pt
+        portfolio.name_en = name_en
+        portfolio.description_pt = description_pt
+        portfolio.description_en = description_en
+        portfolio.year = year
+        portfolio.location_pt = location_pt
+        portfolio.location_en = location_en
+        # Keep legacy fields for backward compatibility
+        portfolio.name = name_pt
+        portfolio.description = description_pt
+        portfolio.location = location_pt
+        db.commit()
     return RedirectResponse(url="/admin/dashboard", status_code=302)
 
 @app.get("/admin/projects/{portfolio_id}/delete")
@@ -406,7 +453,8 @@ async def update_about(
 async def upload_portfolio_image(
     portfolio_id: int,
     file: UploadFile = File(...),
-    caption: str = Form(None),
+    caption_pt: str = Form(None),
+    caption_en: str = Form(None),
     db: Session = Depends(get_db)
 ):
     portfolio = crud_portfolio.get_portfolio(db, portfolio_id=portfolio_id)
@@ -439,12 +487,18 @@ async def upload_portfolio_image(
     else:
         return RedirectResponse(url=f"/admin/projects/{portfolio_id}/edit", status_code=302)
     
-    from app.crud import image as crud_image
-    from app.schemas.image import ImageCreate
+    from app.models.image import PortfolioImage
     
     image_url = f"/static/uploads/{portfolio_id}/{filename}"
-    image_data = ImageCreate(image_url=image_url, caption=caption)
-    crud_image.create_portfolio_image(db=db, portfolio_id=portfolio_id, image=image_data)
+    image = PortfolioImage(
+        portfolio_id=portfolio_id,
+        image_url=image_url,
+        caption_pt=caption_pt,
+        caption_en=caption_en,
+        caption=caption_pt  # Legacy field
+    )
+    db.add(image)
+    db.commit()
     
     return RedirectResponse(url=f"/admin/projects/{portfolio_id}/edit", status_code=302)
 
@@ -452,7 +506,8 @@ async def upload_portfolio_image(
 async def upload_technical_drawing(
     portfolio_id: int,
     file: UploadFile = File(...),
-    caption: str = Form(None),
+    caption_pt: str = Form(None),
+    caption_en: str = Form(None),
     db: Session = Depends(get_db)
 ):
     portfolio = crud_portfolio.get_portfolio(db, portfolio_id=portfolio_id)
@@ -483,12 +538,18 @@ async def upload_technical_drawing(
         with open(file_path, "wb") as f:
             shutil.copyfileobj(file.file, f)
     
-    from app.crud import image as crud_image
-    from app.schemas.image import ImageCreate
+    from app.models.image import TechnicalImage
     
     image_url = f"/static/uploads/{portfolio_id}/technical/{filename}"
-    image_data = ImageCreate(image_url=image_url, caption=caption)
-    crud_image.create_technical_image(db=db, portfolio_id=portfolio_id, image=image_data)
+    image = TechnicalImage(
+        portfolio_id=portfolio_id,
+        image_url=image_url,
+        caption_pt=caption_pt,
+        caption_en=caption_en,
+        caption=caption_pt  # Legacy field
+    )
+    db.add(image)
+    db.commit()
     
     return RedirectResponse(url=f"/admin/projects/{portfolio_id}/edit", status_code=302)
 
@@ -534,12 +595,19 @@ async def set_cover_image(portfolio_id: int, image_id: int, db: Session = Depend
     return RedirectResponse(url=f"/admin/projects/{portfolio_id}/edit", status_code=302)
 
 @app.post("/admin/images/{image_id}/caption")
-async def update_caption(image_id: int, caption: str = Form(""), db: Session = Depends(get_db)):
+async def update_caption(
+    image_id: int, 
+    caption_pt: str = Form(""), 
+    caption_en: str = Form(""), 
+    db: Session = Depends(get_db)
+):
     from app.models.image import PortfolioImage, TechnicalImage
     for model in (PortfolioImage, TechnicalImage):
         img = db.query(model).filter(model.id == image_id).first()
         if img:
-            img.caption = caption
+            img.caption_pt = caption_pt
+            img.caption_en = caption_en
+            img.caption = caption_pt  # Legacy field
             db.commit()
             return RedirectResponse(url=f"/admin/projects/{img.portfolio_id}/edit", status_code=302)
     return RedirectResponse(url="/admin/dashboard", status_code=302)

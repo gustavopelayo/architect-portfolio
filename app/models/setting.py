@@ -15,5 +15,9 @@ class HeroImage(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     image_url = Column(String(255), nullable=False)
-    caption = Column(String(255))
+    # Legacy single-language caption (keep for backward compatibility)
+    caption = Column(String(255), nullable=True)
+    # Bilingual captions
+    caption_pt = Column(String(255), nullable=True)
+    caption_en = Column(String(255), nullable=True)
     sort_order = Column(Integer, default=0)

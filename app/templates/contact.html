@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Contact - {{ settings.get('site_name', 'Daniel Moura') }}{% endblock %}
+{% block title %}{{ t('contact.title', lang) }} - {{ settings.get('site_name', 'Daniel Moura') }}{% endblock %}
 
 {% block content %}
 <style>
@@ -10,25 +10,25 @@
 }
 </style>
 <section class="contact-header">
-    <h1>Get in<br>Touch</h1>
+    <h1>{{ t('contact.get_in_touch', lang) }}</h1>
 </section>
 
 <section class="contact-content">
     <div class="contact-form">
         <form action="/contact" method="POST">
             <div class="form-group">
-                <label for="name">Name</label>
+                <label for="name">{{ t('contact.name', lang) }}</label>
                 <input type="text" id="name" name="name" required>
             </div>
             <div class="form-group">
-                <label for="email">Email</label>
+                <label for="email">{{ t('contact.email', lang) }}</label>
                 <input type="email" id="email" name="email" required>
             </div>
             <div class="form-group">
-                <label for="message">Message</label>
+                <label for="message">{{ t('contact.message', lang) }}</label>
                 <textarea id="message" name="message" rows="6" required></textarea>
             </div>
-            <button type="submit">Send Message</button>
+            <button type="submit">{{ t('contact.send', lang) }}</button>
         </form>
         
         {% if request.query_params.get('success') == '1' %}
@@ -36,8 +36,7 @@
             <div style="width:48px;height:48px;border-radius:50%;background:#1f1f1e;display:flex;align-items:center;justify-content:center;margin:0 auto 1.25rem;">
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M4 10.5L8 14.5L16 5.5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </div>
-            <p style="font-family:'Work Sans',sans-serif;font-size:1.1rem;color:var(--text);margin:0 0 0.35rem;font-weight:400;">Thank you for your message</p>
-            <p style="font-size:0.85rem;color:var(--muted);margin:0;letter-spacing:0.02em;">I'll get back to you soon.</p>
+            <p style="font-family:'Work Sans',sans-serif;font-size:1.1rem;color:var(--text);margin:0 0 0.35rem;font-weight:400;">{{ t('contact.success', lang) }}</p>
         </div>
         {% endif %}
     </div>

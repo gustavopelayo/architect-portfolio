@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}{{ portfolio.name }} - {{ settings.get('site_name', 'Daniel Moura') }}{% endblock %}
+{% block title %}{{ get_translated_field(portfolio, 'name', lang) }} - {{ settings.get('site_name', 'Daniel Moura') }}{% endblock %}
 
 {% block content %}
 <div class="split-view">
@@ -8,8 +8,8 @@
         {% if portfolio.images %}
         {% for image in portfolio.images %}
         <div class="split-img-wrap{% if loop.first %} active{% endif %}">
-            <img src="{{ image.image_url }}" alt="{{ portfolio.name }}" class="split-img">
-            {% if image.caption %}<span class="split-caption">{{ image.caption }}</span>{% endif %}
+            <img src="{{ image.image_url }}" alt="{{ get_translated_field(portfolio, 'name', lang) }}" class="split-img">
+            {% if get_translated_field(image, 'caption', lang) %}<span class="split-caption">{{ get_translated_field(image, 'caption', lang) }}</span>{% endif %}
         </div>
         {% endfor %}
         {% if portfolio.images|length > 1 %}
@@ -29,8 +29,8 @@
         {% if portfolio.technical_images %}
         {% for image in portfolio.technical_images %}
         <div class="split-img-wrap{% if loop.first %} active{% endif %}">
-            <img src="{{ image.image_url }}" alt="{{ portfolio.name }} - Technical" class="split-img">
-            {% if image.caption %}<span class="split-caption">{{ image.caption }}</span>{% endif %}
+            <img src="{{ image.image_url }}" alt="{{ get_translated_field(portfolio, 'name', lang) }} - Technical" class="split-img">
+            {% if get_translated_field(image, 'caption', lang) %}<span class="split-caption">{{ get_translated_field(image, 'caption', lang) }}</span>{% endif %}
         </div>
         {% endfor %}
         {% if portfolio.technical_images|length > 1 %}
@@ -46,26 +46,26 @@
         </div>
     </div>
 
-    {% if portfolio.description %}
+    {% if get_translated_field(portfolio, 'description', lang) %}
     <div class="about-panel" id="aboutPanel">
-        <p>{{ portfolio.description }}</p>
-        {% if portfolio.year or portfolio.location %}
+        <p>{{ get_translated_field(portfolio, 'description', lang) }}</p>
+        {% if portfolio.year or get_translated_field(portfolio, 'location', lang) %}
         <p class="about-meta">
             {% if portfolio.year %}{{ portfolio.year }}{% endif %}
-            {% if portfolio.year and portfolio.location %} / {% endif %}
-            {% if portfolio.location %}{{ portfolio.location }}{% endif %}
+            {% if portfolio.year and get_translated_field(portfolio, 'location', lang) %} / {% endif %}
+            {% if get_translated_field(portfolio, 'location', lang) %}{{ get_translated_field(portfolio, 'location', lang) }}{% endif %}
         </p>
         {% endif %}
     </div>
     {% endif %}
 
     <div class="split-overlay" id="titleToggle">
-        <h1>{{ portfolio.name }}</h1>
-        {% if portfolio.year or portfolio.location %}
+        <h1>{{ get_translated_field(portfolio, 'name', lang) }}</h1>
+        {% if portfolio.year or get_translated_field(portfolio, 'location', lang) %}
         <p>
             {% if portfolio.year %}{{ portfolio.year }}{% endif %}
-            {% if portfolio.year and portfolio.location %} / {% endif %}
-            {% if portfolio.location %}{{ portfolio.location }}{% endif %}
+            {% if portfolio.year and get_translated_field(portfolio, 'location', lang) %} / {% endif %}
+            {% if get_translated_field(portfolio, 'location', lang) %}{{ get_translated_field(portfolio, 'location', lang) }}{% endif %}
         </p>
         {% endif %}
     </div>

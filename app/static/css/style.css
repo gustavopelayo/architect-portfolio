@@ -107,6 +107,34 @@ header {
     transform: scaleX(1);
 }
 
+/* Language switcher */
+.language-switcher {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.language-switcher a {
+    font-size: 0.73rem;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--muted);
+    transition: color 220ms ease;
+}
+
+.language-switcher a.active {
+    color: var(--text);
+    font-weight: 600;
+}
+
+.language-switcher a:hover {
+    color: var(--text);
+}
+
+.language-switcher a::after {
+    display: none; /* Remove underline effect for language switcher */
+}
+
 main {
     min-height: calc(100vh - 140px);
 }
