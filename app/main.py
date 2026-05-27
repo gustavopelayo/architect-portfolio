@@ -429,11 +429,28 @@ async def update_hero_caption(
 @app.get("/admin/settings/hero/add-from-project")
 async def add_hero_from_project(image_url: str, db: Session = Depends(get_db)):
     from app.models.setting import HeroImage
+    from app.models.image import PortfolioImage, TechnicalImage
     from sqlalchemy import func as sa_func
+    
+    # Check if already exists
     existing = db.query(HeroImage).filter(HeroImage.image_url == image_url).first()
     if not existing:
+        # Find the portfolio_id from the source image
+        portfolio_id = None
+        source_img = db.query(PortfolioImage).filter(PortfolioImage.image_url == image_url).first()
+        if source_img:
+            portfolio_id = source_img.portfolio_id
+        else:
+            source_img = db.query(TechnicalImage).filter(TechnicalImage.image_url == image_url).first()
+            if source_img:
+                portfolio_id = source_img.portfolio_id
+        
         max_order = db.query(sa_func.max(HeroImage.sort_order)).scalar() or 0
-        db.add(HeroImage(image_url=image_url, sort_order=max_order + 1))
+        db.add(HeroImage(
+            image_url=image_url,
+            portfolio_id=portfolio_id,
+            sort_order=max_order + 1
+        ))
         db.commit()
     return RedirectResponse(url="/admin/settings", status_code=302)
 
