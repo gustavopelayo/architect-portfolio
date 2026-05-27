@@ -80,20 +80,25 @@
 
 
 
-        {% if project_images %}
+        {% if portfolios_with_images %}
         <h3 style="margin-top:1.5rem;font-size:0.85rem;font-weight:400;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;">From Projects</h3>
-        <div class="current-media" style="margin-top:0.75rem;">
-            {% for img in project_images %}
-            <div class="media-card" style="position:relative;">
-                <img src="{{ img.image_url }}" alt="" style="height:100px;width:100%;object-fit:cover;display:block;">
-                {% if img.image_url in existing_hero_urls %}
-                <span style="position:absolute;top:0.25rem;right:0.25rem;font-size:0.6rem;background:var(--text);color:#fff;padding:0.15rem 0.4rem;">Used</span>
-                {% else %}
-                <a href="/admin/settings/hero/add-from-project?image_url={{ img.image_url | urlencode }}" style="position:absolute;top:0.25rem;right:0.25rem;font-size:0.6rem;background:rgba(255,255,255,0.8);color:var(--text);padding:0.15rem 0.4rem;text-decoration:none;">+</a>
-                {% endif %}
+        {% for portfolio, images in portfolios_with_images %}
+        <div style="margin-top:1.5rem;">
+            <h4 style="font-size:0.75rem;font-weight:500;color:var(--text);margin-bottom:0.75rem;padding-left:0.25rem;">{{ portfolio.name }}</h4>
+            <div class="current-media">
+                {% for img in images %}
+                <div class="media-card" style="position:relative;">
+                    <img src="{{ img.image_url }}" alt="" style="height:100px;width:100%;object-fit:cover;display:block;">
+                    {% if img.image_url in existing_hero_urls %}
+                    <span style="position:absolute;top:0.25rem;right:0.25rem;font-size:0.6rem;background:var(--text);color:#fff;padding:0.15rem 0.4rem;">Used</span>
+                    {% else %}
+                    <a href="/admin/settings/hero/add-from-project?image_url={{ img.image_url | urlencode }}" style="position:absolute;top:0.25rem;right:0.25rem;font-size:0.6rem;background:rgba(255,255,255,0.8);color:var(--text);padding:0.15rem 0.4rem;text-decoration:none;">+</a>
+                    {% endif %}
+                </div>
+                {% endfor %}
             </div>
-            {% endfor %}
         </div>
+        {% endfor %}
         {% endif %}
     </section>
 

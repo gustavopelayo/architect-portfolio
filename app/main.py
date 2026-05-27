@@ -285,7 +285,9 @@ async def toggle_featured(portfolio_id: int, db: Session = Depends(get_db)):
 async def admin_settings(request: Request, db: Session = Depends(get_db)):
     from app.models.setting import SiteSetting, HeroImage
     from app.models.image import PortfolioImage, TechnicalImage
+    from app.models.portfolio import Portfolio
     from sqlalchemy.orm import joinedload
+    from collections import defaultdict
     
     settings_list = {r.key: r.value for r in db.query(SiteSetting).all()}
     hero_images = db.query(HeroImage).options(joinedload(HeroImage.portfolio)).order_by(HeroImage.sort_order).all()
@@ -294,7 +296,16 @@ async def admin_settings(request: Request, db: Session = Depends(get_db)):
     # Load all project images with their portfolio data
     portfolio_images = db.query(PortfolioImage).options(joinedload(PortfolioImage.portfolio)).all()
     technical_images = db.query(TechnicalImage).options(joinedload(TechnicalImage.portfolio)).all()
-    project_images = portfolio_images + technical_images
+    all_project_images = portfolio_images + technical_images
+    
+    # Group images by portfolio
+    images_by_portfolio = defaultdict(list)
+    for img in all_project_images:
+        if img.portfolio:
+            images_by_portfolio[img.portfolio].append(img)
+    
+    # Sort portfolios by name
+    portfolios_with_images = sorted(images_by_portfolio.items(), key=lambda x: x[0].name or '')
     
     existing_hero_urls = {h.image_url for h in hero_images}
     return templates.TemplateResponse(
@@ -305,7 +316,7 @@ async def admin_settings(request: Request, db: Session = Depends(get_db)):
             "settings_list": settings_list,
             "hero_images": hero_images,
             "settings": site_settings,
-            "project_images": project_images,
+            "portfolios_with_images": portfolios_with_images,
             "existing_hero_urls": existing_hero_urls,
         }
     )
