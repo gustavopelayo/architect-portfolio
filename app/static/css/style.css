@@ -897,8 +897,9 @@ footer {
 /* Hero project name display */
 .hero-project-name {
     position: absolute;
-    bottom: 2rem;
-    left: 2rem;
+    top: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
     color: white;
     font-size: 1.5rem;
     font-weight: 600;
@@ -913,10 +914,41 @@ footer {
     opacity: 1;
 }
 
+.hero-top-nav {
+    position: absolute;
+    top: 2rem;
+    right: 2rem;
+    display: flex;
+    gap: 2rem;
+    z-index: 10;
+}
+
+.hero-top-nav a {
+    color: white;
+    text-decoration: none;
+    font-size: 1rem;
+    font-weight: 500;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+    transition: opacity 0.3s ease;
+}
+
+.hero-top-nav a:hover {
+    opacity: 0.7;
+}
+
 @media (max-width: 768px) {
     .hero-project-name {
         font-size: 1.1rem;
-        bottom: 1.5rem;
-        left: 1.5rem;
+        top: 1.5rem;
+    }
+    
+    .hero-top-nav {
+        top: 1.5rem;
+        right: 1.5rem;
+        gap: 1rem;
+    }
+    
+    .hero-top-nav a {
+        font-size: 0.9rem;
     }
 }
