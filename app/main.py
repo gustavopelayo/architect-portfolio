@@ -285,10 +285,18 @@ async def toggle_featured(portfolio_id: int, db: Session = Depends(get_db)):
 async def admin_settings(request: Request, db: Session = Depends(get_db)):
     from app.models.setting import SiteSetting, HeroImage
     from app.models.image import PortfolioImage, TechnicalImage
+    from app.models.portfolio import Portfolio
+    from sqlalchemy.orm import joinedload
+    
     settings_list = {r.key: r.value for r in db.query(SiteSetting).all()}
-    hero_images = db.query(HeroImage).order_by(HeroImage.sort_order).all()
+    hero_images = db.query(HeroImage).options(joinedload(HeroImage.portfolio)).order_by(HeroImage.sort_order).all()
     site_settings = get_site_settings()
-    project_images = db.query(PortfolioImage).all() + db.query(TechnicalImage).all()
+    
+    # Load all project images with their portfolio data
+    portfolio_images = db.query(PortfolioImage).options(joinedload(PortfolioImage.portfolio)).all()
+    technical_images = db.query(TechnicalImage).options(joinedload(TechnicalImage.portfolio)).all()
+    project_images = portfolio_images + technical_images
+    
     existing_hero_urls = {h.image_url for h in hero_images}
     return templates.TemplateResponse(
         request=request,
