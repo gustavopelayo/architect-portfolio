@@ -285,7 +285,6 @@ async def toggle_featured(portfolio_id: int, db: Session = Depends(get_db)):
 async def admin_settings(request: Request, db: Session = Depends(get_db)):
     from app.models.setting import SiteSetting, HeroImage
     from app.models.image import PortfolioImage, TechnicalImage
-    from app.models.portfolio import Portfolio
     from sqlalchemy.orm import joinedload
     
     settings_list = {r.key: r.value for r in db.query(SiteSetting).all()}
