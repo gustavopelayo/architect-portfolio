@@ -61,6 +61,61 @@ a {
     width: auto;
 }
 
+.top-nav-global {
+    position: fixed;
+    top: 2rem;
+    right: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    z-index: 30;
+}
+
+.top-nav-global a {
+    color: white;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+    transition: opacity 0.3s ease;
+}
+
+.top-nav-global a:hover {
+    opacity: 0.7;
+}
+
+.lang-switcher-inline {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+}
+
+.lang-switcher-inline a {
+    color: rgba(255, 255, 255, 0.7);
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+    transition: color 0.3s ease;
+}
+
+.lang-switcher-inline a.active {
+    color: white;
+}
+
+.lang-switcher-inline a:hover {
+    color: white;
+    opacity: 1;
+}
+
+.lang-switcher-inline .lang-divider {
+    color: rgba(255, 255, 255, 0.7);
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
 .side-nav-left,
 .side-nav-right {
     position: fixed;

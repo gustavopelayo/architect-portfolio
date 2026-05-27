@@ -17,10 +17,6 @@
         {% endfor %}
     </div>
     <div class="hero-project-name" id="heroProjectName"></div>
-    <div class="hero-top-nav">
-        <a href="/portfolio">{{ t('nav.portfolio', lang | default('pt')) }}</a>
-        <a href="/contact">{{ t('nav.contact', lang | default('pt')) }}</a>
-    </div>
     {% else %}
     <img src="/static/uploads/hero-minimalist.jpg" alt="Architecture Studio" class="hero-image">
     {% endif %}

@@ -16,21 +16,21 @@
         </a>
     </div>
 
-    <div class="language-switcher">
-        {% set current_lang = lang | default('pt') %}
-        {% if current_lang == 'pt' %}
-            <a href="{{ request.url.path }}?lang=pt" onclick="document.cookie='language=pt; max-age=31536000; path=/; samesite=lax'" class="active">PT</a> | <a href="{{ request.url.path }}?lang=en" onclick="document.cookie='language=en; max-age=31536000; path=/; samesite=lax'">EN</a>
-        {% else %}
-            <a href="{{ request.url.path }}?lang=pt" onclick="document.cookie='language=pt; max-age=31536000; path=/; samesite=lax'">PT</a> | <a href="{{ request.url.path }}?lang=en" onclick="document.cookie='language=en; max-age=31536000; path=/; samesite=lax'" class="active">EN</a>
-        {% endif %}
-    </div>
-
-    <div class="side-nav-left">
-        <a href="/contact" class="side-nav-link">{{ t('nav.contact', lang | default('pt')) }}</a>
-    </div>
-    
-    <div class="side-nav-right">
-        <a href="/portfolio" class="side-nav-link">Portfolio</a>
+    <div class="top-nav-global">
+        <a href="/portfolio">{{ t('nav.portfolio', lang | default('pt')) }}</a>
+        <a href="/contact">{{ t('nav.contact', lang | default('pt')) }}</a>
+        <div class="lang-switcher-inline">
+            {% set current_lang = lang | default('pt') %}
+            {% if current_lang == 'pt' %}
+                <a href="{{ request.url.path }}?lang=pt" onclick="document.cookie='language=pt; max-age=31536000; path=/; samesite=lax'" class="active">PT</a>
+                <span class="lang-divider">|</span>
+                <a href="{{ request.url.path }}?lang=en" onclick="document.cookie='language=en; max-age=31536000; path=/; samesite=lax'">EN</a>
+            {% else %}
+                <a href="{{ request.url.path }}?lang=pt" onclick="document.cookie='language=pt; max-age=31536000; path=/; samesite=lax'">PT</a>
+                <span class="lang-divider">|</span>
+                <a href="{{ request.url.path }}?lang=en" onclick="document.cookie='language=en; max-age=31536000; path=/; samesite=lax'" class="active">EN</a>
+            {% endif %}
+        </div>
     </div>
 
     <main>
