@@ -370,33 +370,35 @@ async def upload_logo(
     db.commit()
     return RedirectResponse(url="/admin/settings", status_code=302)
 
-@app.post("/admin/settings/hero")
-async def upload_hero_image(
-    request: Request,
-    file: UploadFile = File(...),
-    caption_pt: str = Form(None),
-    caption_en: str = Form(None),
-    db: Session = Depends(get_db)
-):
-    from app.models.setting import HeroImage
-    from sqlalchemy import func as sa_func
-    upload_dir = Path("app/static/uploads/hero")
-    upload_dir.mkdir(parents=True, exist_ok=True)
-    ext = Path(file.filename).suffix or ".jpg"
-    filename = f"hero_{uuid.uuid4().hex[:12]}{ext}"
-    filepath = upload_dir / filename
-    with open(filepath, "wb") as f:
-        shutil.copyfileobj(file.file, f)
-    max_order = db.query(sa_func.max(HeroImage.sort_order)).scalar() or 0
-    db.add(HeroImage(
-        image_url=f"/static/uploads/hero/{filename}",
-        caption_pt=caption_pt,
-        caption_en=caption_en,
-        caption=caption_pt,  # Legacy field
-        sort_order=max_order + 1
-    ))
-    db.commit()
-    return RedirectResponse(url="/admin/settings", status_code=302)
+# Standalone hero upload endpoint removed - now using add_hero_from_project instead
+# which associates hero images with their source portfolio projects
+# @app.post("/admin/settings/hero")
+# async def upload_hero_image(
+#     request: Request,
+#     file: UploadFile = File(...),
+#     caption_pt: str = Form(None),
+#     caption_en: str = Form(None),
+#     db: Session = Depends(get_db)
+# ):
+#     from app.models.setting import HeroImage
+#     from sqlalchemy import func as sa_func
+#     upload_dir = Path("app/static/uploads/hero")
+#     upload_dir.mkdir(parents=True, exist_ok=True)
+#     ext = Path(file.filename).suffix or ".jpg"
+#     filename = f"hero_{uuid.uuid4().hex[:12]}{ext}"
+#     filepath = upload_dir / filename
+#     with open(filepath, "wb") as f:
+#         shutil.copyfileobj(file.file, f)
+#     max_order = db.query(sa_func.max(HeroImage.sort_order)).scalar() or 0
+#     db.add(HeroImage(
+#         image_url=f"/static/uploads/hero/{filename}",
+#         caption_pt=caption_pt,
+#         caption_en=caption_en,
+#         caption=caption_pt,  # Legacy field
+#         sort_order=max_order + 1
+#     ))
+#     db.commit()
+#     return RedirectResponse(url="/admin/settings", status_code=302)
 
 @app.get("/admin/settings/hero/{hero_id}/delete")
 async def delete_hero_image(hero_id: int, db: Session = Depends(get_db)):

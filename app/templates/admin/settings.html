@@ -78,23 +78,7 @@
         <p class="empty-state">No hero images yet.</p>
         {% endif %}
 
-        <form action="/admin/settings/hero" method="POST" enctype="multipart/form-data" class="upload-form">
-            <div class="form-group">
-                <label for="hero_file">Add Hero Image</label>
-                <input type="file" id="hero_file" name="file" required>
-            </div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 0.75rem;">
-                <div class="form-group">
-                    <label for="caption_pt">Caption (PT)</label>
-                    <input type="text" id="caption_pt" name="caption_pt">
-                </div>
-                <div class="form-group">
-                    <label for="caption_en">Caption (EN)</label>
-                    <input type="text" id="caption_en" name="caption_en">
-                </div>
-            </div>
-            <button type="submit" class="btn-upload">Upload</button>
-        </form>
+
 
         {% if project_images %}
         <h3 style="margin-top:1.5rem;font-size:0.85rem;font-weight:400;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;">From Projects</h3>
