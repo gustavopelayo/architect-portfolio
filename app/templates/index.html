@@ -7,9 +7,16 @@
     {% if settings.hero_images %}
     <div class="hero-slideshow">
         {% for img in settings.hero_images %}
-        <img src="{{ img.image_url }}" alt="{{ get_translated_field(img, 'caption', lang) or '' }}" class="hero-image hero-slide{% if loop.first %} active{% endif %}">
+        <img src="{{ img.image_url }}" 
+             alt="{{ get_translated_field(img, 'caption', lang) or '' }}" 
+             class="hero-image hero-slide{% if loop.first %} active{% endif %}"
+             {% if img.portfolio %}
+             data-project-name-pt="{{ img.portfolio.name_pt or img.portfolio.name or '' }}"
+             data-project-name-en="{{ img.portfolio.name_en or '' }}"
+             {% endif %}>
         {% endfor %}
     </div>
+    <div class="hero-project-name" id="heroProjectName"></div>
     {% else %}
     <img src="/static/uploads/hero-minimalist.jpg" alt="Architecture Studio" class="hero-image">
     {% endif %}
@@ -23,11 +30,31 @@
 (function() {
     var slides = document.querySelectorAll('.hero-slide');
     var sidx = 0;
+    var projectNameEl = document.getElementById('heroProjectName');
+    var currentLang = document.documentElement.lang || 'pt';
+
+    function updateProjectName() {
+        if (!projectNameEl) return;
+        
+        var currentSlide = slides[sidx];
+        var projectNamePt = currentSlide.getAttribute('data-project-name-pt');
+        var projectNameEn = currentSlide.getAttribute('data-project-name-en');
+        
+        var projectName = currentLang === 'en' ? (projectNameEn || projectNamePt) : projectNamePt;
+        
+        if (projectName && projectName.trim()) {
+            projectNameEl.textContent = projectName;
+            projectNameEl.classList.add('visible');
+        } else {
+            projectNameEl.classList.remove('visible');
+        }
+    }
 
     function advance() {
         slides[sidx].classList.remove('active');
         sidx = (sidx + 1) % slides.length;
         slides[sidx].classList.add('active');
+        updateProjectName();
     }
 
     if (slides.length > 1) {
@@ -37,7 +64,10 @@
         slides.forEach(function(s) {
             s.addEventListener('click', function(e) { e.stopPropagation(); advance(); });
         });
+        updateProjectName(); // Show name for first slide
         setInterval(advance, 6000);
+    } else if (slides.length === 1) {
+        updateProjectName(); // Show name for single slide
     }
 })();
 </script>
