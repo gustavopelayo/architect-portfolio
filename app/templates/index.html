@@ -2,6 +2,8 @@
 
 {% block title %}{{ settings.get('site_name', 'Daniel Moura') }}{% endblock %}
 
+{% block body_class %}home-page{% endblock %}
+
 {% block content %}
 <section class="hero">
     {% if settings.hero_images %}
@@ -16,15 +18,14 @@
              {% endif %}>
         {% endfor %}
     </div>
-    <div class="hero-project-name" id="heroProjectName"></div>
     {% else %}
     <img src="/static/uploads/hero-minimalist.jpg" alt="Architecture Studio" class="hero-image">
     {% endif %}
-</section>
+    
+    <div class="hero-project-name" id="heroProjectName"></div>
 
-<div class="bottom-nav">
-    <a href="/about" class="bottom-about">{{ t('nav.about', lang | default('pt')) }}</a>
-</div>
+    <a href="/about" class="hero-about">{{ t('nav.about', lang | default('pt')) }}</a>
+</section>
 
 <script>
 (function() {

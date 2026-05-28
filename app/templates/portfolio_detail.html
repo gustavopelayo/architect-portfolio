@@ -60,6 +60,7 @@
     {% endif %}
 
     <div class="split-overlay" id="titleToggle">
+        <span class="split-brand">{{ settings.get('site_name', 'Daniel Moura') }}</span>
         <h1>{{ get_translated_field(portfolio, 'name', lang) }}</h1>
         {% if portfolio.year or get_translated_field(portfolio, 'location', lang) %}
         <p>

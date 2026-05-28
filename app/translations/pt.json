@@ -2,7 +2,8 @@
   "nav": {
     "home": "Início",
     "about": "Sobre",
-    "contact": "Contato",
+    "portfolio": "Portfolio",
+    "contact": "Contacto",
     "admin": "Admin"
   },
   "home": {
