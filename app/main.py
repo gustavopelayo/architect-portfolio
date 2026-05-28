@@ -12,6 +12,7 @@ from pathlib import Path
 from datetime import datetime, timezone
 from typing import Optional
 from app.api.v1.endpoints import portfolio, auth
+from app.models.user import User
 from app.api.deps import get_admin_user, NotAuthenticatedException
 from app.db.session import get_db
 from app.core.security import authenticate_user, create_access_token
