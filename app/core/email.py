@@ -21,6 +21,7 @@ def send_contact_email(to_email: str, name: str, from_email: str, message: str) 
         "to": [to_email],
         "subject": f"Portfolio Contact: {name}",
         "html": html_content,
+        "reply_to": [from_email],
     }
 
     try:
