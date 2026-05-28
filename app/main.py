@@ -9,9 +9,10 @@ import uvicorn
 import shutil
 import uuid
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional
 from app.api.v1.endpoints import portfolio, auth
+from app.api.deps import get_admin_user, NotAuthenticatedException
 from app.db.session import get_db
 from app.core.security import authenticate_user, create_access_token
 from app.crud import portfolio as crud_portfolio
@@ -22,6 +23,10 @@ from app.utils.i18n import validate_language, get_translation, get_translated_fi
 from app.models.contact_submission import ContactSubmission
 
 app = FastAPI(title="Architect Portfolio")
+
+@app.exception_handler(NotAuthenticatedException)
+async def not_auth_handler(request: Request, exc: NotAuthenticatedException):
+    return RedirectResponse(url="/admin/login", status_code=302)
 
 @app.on_event("startup")
 def on_startup():
@@ -147,7 +152,7 @@ async def contact_form(
     fax: str = Form(""),
     db: Session = Depends(get_db),
 ):
-    from datetime import datetime, timedelta
+    from datetime import datetime, timedelta, timezone
     from app.core.email import send_contact_email
 
     # Honeypot: if hidden field is filled, silently reject
@@ -157,7 +162,7 @@ async def contact_form(
 
     # Rate limit: max 5 submissions per IP per hour
     ip = request.client.host
-    cutoff = datetime.utcnow() - timedelta(hours=1)
+    cutoff = datetime.now(timezone.utc).replace(tzinfo=None) - timedelta(hours=1)
     recent = db.query(ContactSubmission).filter(
         ContactSubmission.ip_address == ip,
         ContactSubmission.created_at >= cutoff,
@@ -176,7 +181,7 @@ async def contact_form(
         )
 
     # Log submission
-    db.add(ContactSubmission(ip_address=ip, created_at=datetime.utcnow()))
+    db.add(ContactSubmission(ip_address=ip, created_at=datetime.now(timezone.utc).replace(tzinfo=None)))
     db.commit()
 
     site_settings = get_site_settings()
@@ -201,6 +206,31 @@ async def admin_login_post(
     password: str = Form(...),
     db: Session = Depends(get_db)
 ):
+    from datetime import datetime, timedelta, timezone
+    from app.models.contact_submission import ContactSubmission
+
+    # Rate limit: max 10 login attempts per IP per 15 minutes
+    ip = request.client.host
+    cutoff = datetime.now(timezone.utc).replace(tzinfo=None) - timedelta(minutes=15)
+    recent = db.query(ContactSubmission).filter(
+        ContactSubmission.ip_address == ip,
+        ContactSubmission.created_at >= cutoff,
+    ).count()
+    if recent >= 10:
+        return templates.TemplateResponse(
+            request=request,
+            name="admin/login.html",
+            context={
+                "request": request,
+                "error": "Too many login attempts. Please try again later.",
+                "settings": get_site_settings(),
+            },
+        )
+
+    # Log login attempt
+    db.add(ContactSubmission(ip_address=ip, created_at=datetime.now(timezone.utc).replace(tzinfo=None)))
+    db.commit()
+
     user = authenticate_user(db, username, password)
     if not user:
         site_settings = get_site_settings()
@@ -211,7 +241,12 @@ async def admin_login_post(
         )
     access_token = create_access_token(data={"sub": user.username})
     response = RedirectResponse(url="/admin/dashboard", status_code=302)
-    response.set_cookie(key="access_token", value=access_token)
+    response.set_cookie(
+        key="access_token",
+        value=access_token,
+        httponly=True,
+        samesite="lax",
+    )
     return response
 
 @app.get("/admin/logout")
@@ -221,7 +256,7 @@ async def admin_logout():
     return response
 
 @app.get("/admin/dashboard", response_class=HTMLResponse)
-async def admin_dashboard(request: Request, db: Session = Depends(get_db)):
+async def admin_dashboard(request: Request, db: Session = Depends(get_db), _admin: User = Depends(get_admin_user)):
     site_settings = get_site_settings()
     portfolios = crud_portfolio.get_portfolios(db, skip=0, limit=100)
     return templates.TemplateResponse(
@@ -231,7 +266,7 @@ async def admin_dashboard(request: Request, db: Session = Depends(get_db)):
     )
 
 @app.get("/admin/projects/create", response_class=HTMLResponse)
-async def create_project_form(request: Request):
+async def create_project_form(request: Request, _admin: User = Depends(get_admin_user)):
     site_settings = get_site_settings()
     return templates.TemplateResponse(request=request, name="admin/project_form.html", context={"request": request, "settings": site_settings})
 
@@ -245,7 +280,8 @@ async def create_project(
     year: int = Form(None),
     location_pt: str = Form(None),
     location_en: str = Form(None),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    _admin: User = Depends(get_admin_user),
 ):
     from app.models.portfolio import Portfolio
     portfolio = Portfolio(
@@ -266,7 +302,7 @@ async def create_project(
     return RedirectResponse(url="/admin/dashboard", status_code=302)
 
 @app.get("/admin/projects/{portfolio_id}/edit", response_class=HTMLResponse)
-async def edit_project_form(request: Request, portfolio_id: int, db: Session = Depends(get_db)):
+async def edit_project_form(request: Request, portfolio_id: int, db: Session = Depends(get_db), _admin: User = Depends(get_admin_user)):
     site_settings = get_site_settings()
     portfolio = crud_portfolio.get_portfolio(db, portfolio_id=portfolio_id)
     if not portfolio:
@@ -288,7 +324,8 @@ async def edit_project(
     year: int = Form(None),
     location_pt: str = Form(None),
     location_en: str = Form(None),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    _admin: User = Depends(get_admin_user),
 ):
     portfolio = crud_portfolio.get_portfolio(db, portfolio_id=portfolio_id)
     if portfolio:
@@ -307,12 +344,12 @@ async def edit_project(
     return RedirectResponse(url="/admin/dashboard", status_code=302)
 
 @app.get("/admin/projects/{portfolio_id}/delete")
-async def delete_project(portfolio_id: int, db: Session = Depends(get_db)):
+async def delete_project(portfolio_id: int, db: Session = Depends(get_db), _admin: User = Depends(get_admin_user)):
     crud_portfolio.delete_portfolio(db=db, portfolio_id=portfolio_id)
     return RedirectResponse(url="/admin/dashboard", status_code=302)
 
 @app.post("/admin/projects/{portfolio_id}/toggle-featured")
-async def toggle_featured(portfolio_id: int, db: Session = Depends(get_db)):
+async def toggle_featured(portfolio_id: int, db: Session = Depends(get_db), _admin: User = Depends(get_admin_user)):
     portfolio = crud_portfolio.get_portfolio(db, portfolio_id=portfolio_id)
     if portfolio:
         from app.schemas.portfolio import PortfolioUpdate
@@ -320,7 +357,7 @@ async def toggle_featured(portfolio_id: int, db: Session = Depends(get_db)):
     return RedirectResponse(url="/admin/dashboard", status_code=302)
 
 @app.get("/admin/settings", response_class=HTMLResponse)
-async def admin_settings(request: Request, db: Session = Depends(get_db)):
+async def admin_settings(request: Request, db: Session = Depends(get_db), _admin: User = Depends(get_admin_user)):
     from app.models.setting import SiteSetting, HeroImage
     from app.models.image import PortfolioImage, TechnicalImage
     from app.models.portfolio import Portfolio
@@ -363,7 +400,8 @@ async def admin_settings(request: Request, db: Session = Depends(get_db)):
 async def update_site_name(
     site_name: str = Form(...),
     copyright: str = Form(None),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    _admin: User = Depends(get_admin_user),
 ):
     from app.models.setting import SiteSetting
     for key, value in {"site_name": site_name, "copyright": copyright}.items():
@@ -380,7 +418,8 @@ async def update_site_name(
 async def update_taglines(
     request: Request,
     taglines: str = Form(...),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    _admin: User = Depends(get_admin_user),
 ):
     from app.models.setting import SiteSetting
     row = db.query(SiteSetting).filter(SiteSetting.key == "tagline").first()
@@ -395,7 +434,8 @@ async def update_taglines(
 async def upload_logo(
     request: Request,
     file: UploadFile = File(...),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    _admin: User = Depends(get_admin_user),
 ):
     from app.models.setting import SiteSetting
     import time
@@ -450,7 +490,7 @@ async def upload_logo(
 #     return RedirectResponse(url="/admin/settings", status_code=302)
 
 @app.get("/admin/settings/hero/{hero_id}/delete")
-async def delete_hero_image(hero_id: int, db: Session = Depends(get_db)):
+async def delete_hero_image(hero_id: int, db: Session = Depends(get_db), _admin: User = Depends(get_admin_user)):
     from app.models.setting import HeroImage
     img = db.query(HeroImage).filter(HeroImage.id == hero_id).first()
     if img:
@@ -466,7 +506,8 @@ async def update_hero_caption(
     hero_id: int,
     caption_pt: str = Form(""),
     caption_en: str = Form(""),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    _admin: User = Depends(get_admin_user),
 ):
     from app.models.setting import HeroImage
     img = db.query(HeroImage).filter(HeroImage.id == hero_id).first()
@@ -478,7 +519,7 @@ async def update_hero_caption(
     return RedirectResponse(url="/admin/settings", status_code=302)
 
 @app.get("/admin/settings/hero/add-from-project")
-async def add_hero_from_project(image_url: str, db: Session = Depends(get_db)):
+async def add_hero_from_project(image_url: str, db: Session = Depends(get_db), _admin: User = Depends(get_admin_user)):
     from app.models.setting import HeroImage
     from app.models.image import PortfolioImage, TechnicalImage
     from sqlalchemy import func as sa_func
@@ -514,7 +555,8 @@ async def update_contact(
     address_en: str = Form(None),
     blurb_pt: str = Form(None),
     blurb_en: str = Form(None),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    _admin: User = Depends(get_admin_user),
 ):
     from app.models.setting import SiteSetting
     updates = {
@@ -543,7 +585,8 @@ async def update_about(
     body_pt: str = Form(None),
     body_en: str = Form(None),
     file: UploadFile = File(None),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    _admin: User = Depends(get_admin_user),
 ):
     from app.models.setting import SiteSetting
     
@@ -585,7 +628,8 @@ async def upload_portfolio_image(
     file: UploadFile = File(...),
     caption_pt: str = Form(None),
     caption_en: str = Form(None),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    _admin: User = Depends(get_admin_user),
 ):
     portfolio = crud_portfolio.get_portfolio(db, portfolio_id=portfolio_id)
     if not portfolio:
@@ -638,7 +682,8 @@ async def upload_technical_drawing(
     file: UploadFile = File(...),
     caption_pt: str = Form(None),
     caption_en: str = Form(None),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    _admin: User = Depends(get_admin_user),
 ):
     portfolio = crud_portfolio.get_portfolio(db, portfolio_id=portfolio_id)
     if not portfolio:
@@ -684,7 +729,7 @@ async def upload_technical_drawing(
     return RedirectResponse(url=f"/admin/projects/{portfolio_id}/edit", status_code=302)
 
 @app.get("/admin/images/{image_id}/delete")
-async def delete_image(image_id: int, db: Session = Depends(get_db)):
+async def delete_image(image_id: int, db: Session = Depends(get_db), _admin: User = Depends(get_admin_user)):
     from app.models.image import PortfolioImage, TechnicalImage
     from pathlib import Path
     
@@ -712,7 +757,7 @@ async def delete_image(image_id: int, db: Session = Depends(get_db)):
     return RedirectResponse(url=f"/admin/projects/{portfolio_id}/edit", status_code=302)
 
 @app.get("/admin/projects/{portfolio_id}/images/{image_id}/set-cover")
-async def set_cover_image(portfolio_id: int, image_id: int, db: Session = Depends(get_db)):
+async def set_cover_image(portfolio_id: int, image_id: int, db: Session = Depends(get_db), _admin: User = Depends(get_admin_user)):
     from app.models.image import PortfolioImage, TechnicalImage
     db.query(PortfolioImage).filter(PortfolioImage.portfolio_id == portfolio_id).update({"is_cover": False})
     db.query(TechnicalImage).filter(TechnicalImage.portfolio_id == portfolio_id).update({"is_cover": False})
@@ -729,7 +774,8 @@ async def update_caption(
     image_id: int, 
     caption_pt: str = Form(""), 
     caption_en: str = Form(""), 
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    _admin: User = Depends(get_admin_user),
 ):
     from app.models.image import PortfolioImage, TechnicalImage
     for model in (PortfolioImage, TechnicalImage):
