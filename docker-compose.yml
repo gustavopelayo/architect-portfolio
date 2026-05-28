@@ -10,6 +10,7 @@ services:
       - ./test.db:/app/test.db
     environment:
       - DATABASE_URL=sqlite:///./test.db
+      - RESEND_API_KEY=${RESEND_API_KEY}
 
   tunnel:
     image: cloudflare/cloudflared:latest
