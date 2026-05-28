@@ -143,11 +143,16 @@ async def contact_form(
     name: str = Form(...),
     email: str = Form(...),
     message: str = Form(...),
-    db: Session = Depends(get_db)
 ):
-    # Log the form data (in a real application, you would send an email here)
-    print(f"Contact form submission from {name} ({email}): {message}")
-    # Redirect to the contact page with a success message
+    from app.core.email import send_contact_email
+
+    site_settings = get_site_settings()
+    to_email = site_settings.get("contact_email")
+    if to_email:
+        send_contact_email(to_email=to_email, name=name, from_email=email, message=message)
+    else:
+        print(f"No contact email configured — submission from {name} ({email}): {message}")
+
     return RedirectResponse(url="/contact?success=1", status_code=302)
 
 # Admin routes

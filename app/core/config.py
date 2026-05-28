@@ -11,8 +11,10 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 8  # 8 days
     ALGORITHM: str = "HS256"
     DATABASE_URL: str = "sqlite:///./test.db"  # Using SQLite for simplicity
+    RESEND_API_KEY: str = ""
     
     class Config:
         case_sensitive = True
+        env_file = ".env"
 
 settings = Settings()
