@@ -19,6 +19,7 @@ from app.core.settings_helper import get_site_settings
 from app.db.base import Base
 from app.db.session import engine
 from app.utils.i18n import validate_language, get_translation, get_translated_field
+from app.models.contact_submission import ContactSubmission
 
 app = FastAPI(title="Architect Portfolio")
 
@@ -143,8 +144,40 @@ async def contact_form(
     name: str = Form(...),
     email: str = Form(...),
     message: str = Form(...),
+    fax: str = Form(""),
+    db: Session = Depends(get_db),
 ):
+    from datetime import datetime, timedelta
     from app.core.email import send_contact_email
+
+    # Honeypot: if hidden field is filled, silently reject
+    if fax:
+        print(f"Honeypot triggered from {request.client.host}")
+        return RedirectResponse(url="/contact?success=1", status_code=302)
+
+    # Rate limit: max 5 submissions per IP per hour
+    ip = request.client.host
+    cutoff = datetime.utcnow() - timedelta(hours=1)
+    recent = db.query(ContactSubmission).filter(
+        ContactSubmission.ip_address == ip,
+        ContactSubmission.created_at >= cutoff,
+    ).count()
+    if recent >= 5:
+        print(f"Rate limit hit for {ip} ({recent} submissions in last hour)")
+        return templates.TemplateResponse(
+            request=request,
+            name="contact.html",
+            context={
+                "request": request,
+                "settings": get_site_settings(),
+                "lang": request.cookies.get("language", "pt"),
+                "error": "Too many submissions. Please try again later.",
+            },
+        )
+
+    # Log submission
+    db.add(ContactSubmission(ip_address=ip, created_at=datetime.utcnow()))
+    db.commit()
 
     site_settings = get_site_settings()
     to_email = site_settings.get("contact_email")
